@@ -1,0 +1,63 @@
+Hide and Seek and Shoot, more concretely.
+
+---MAP---
+First thing first, the map will be just the whole screen.
+It can have some texture, for example grass or sand.
+
+---WALLS---
+On the map there will be a bunch of walls,
+which are rectangles of arbitrary different sizes.
+They may or may not have a texture.
+They might be just some dark grey color.
+They will not overlap with each other nor with the screen,
+and they should have some meaningful distance between them,
+so that the player and the enemy can pass.
+Their exact layout, number and color can be loaded from a file.
+
+---PLAYER---
+Player entity will consist of a head, viewed from above, and a gun next to the head.
+The user will be able to move the player entity around the map with WASD keys.
+Of course the player's entity can move only inside the map and outside of walls, and outside of the enemy.
+But those WASD controls will only account for translation movement.
+The player entity will also be rotated by the user's mouse.
+More specifically the player entity will always look at where the mouse is.
+The mouse will also be the target of the gun.
+So the gun should be pointed towards that target.
+With the press of the left mouse button a bullet will be shot from the gun
+directly towards the target (mouse).
+When the player/enemy is hit by a bullet, the bullet will disappear,
+and the player's/enemy's health points will go down by some amount. (refer to this sentence as bullet-rule-0)
+
+---ENEMY---
+The enemy will also consist of a head (different texture), viewed from above, and a gun next to the head (same texture).
+The enemy will have something called a visual angle, which determines its field of view.
+The field of view will be visualised with straight lines (probably pale red), evenly spaced,
+going out from the center of the enemy's head towards every direction withing the visual angle,
+until they reach a wall or the map's borders.
+When the player is withing the field of view of the enemy, we will say that the enemy sees the player.
+When the enemy sees the player, it will chase the player, meaning that it will move directly towards them
+with some constant speed.
+When the enemy stops seeing the player, it will remember the last position where it saw the player,
+and move towards that position, until getting reasonably close to that position,
+and then it will understand that the player is not there.
+At that point the enemy is lost and has no idea where the player is,
+so it will chose a random point on the map (in version 1 of the game, that point will be always
+chosen so that it can be reached with a straight line. Later it can be made to be any point,
+and the path will have to be found with an A* algorithm) and move towards it until getting reasonably close,
+then choose another random point, and so on, until the player is seen again.
+When the player is currently seen, the enemy will shoot bullets from time to time
+at the direction of the player. (bullet-rule-0 applies here).
+Of course the enemy also can move only inside the map, outside of walls, and outside of the player.
+Also the enemy is always looking at their target point, and the gun is pointed towards that same point.
+That point is the last spot where the player has been seen, or the randomly chosen point.
+
+---BULLETS---
+Bullets are just rectangles with some texture, or color.
+They have an initial position, which is the tip of the gun, from which they are fired.
+They also have a velocity vector, which determines the speed and direction towards which they are moving.
+They move in a straight line until they hit player, enemy, wall or the border of the map.
+(When hitting the player/enemy, bullet-rule-0 applies)
+
+---HEALTH BARS---
+There will be two health bars in the upper corners,
+indicating the player and enemy's health points at each instance.
