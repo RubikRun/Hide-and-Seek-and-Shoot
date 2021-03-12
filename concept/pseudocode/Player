@@ -1,0 +1,2 @@
+class Player will inherit from Person and will consist of:
+    functionality to move the player up/down/left/right with its speed

@@ -1,0 +1,10 @@
+class Enemy will consist of:
+    functionality to move towards its target at constant speed
+    visual angle
+    functionality to check whether a point is within its field of view
+    lines representing the field of view, which will be drawn together with the head and gun
+    functionality to update target point:
+        if player is seen, update to player's position
+        otherwise:
+            if target point is close enough, choose another target point at random
+            otherwise do nothing

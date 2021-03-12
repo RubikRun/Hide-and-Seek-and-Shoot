@@ -1,0 +1,4 @@
+class Bullet will consist of:
+    rectangular shape with some texture/color
+    velocity
+    functionality to hit a person, causing the person to lose health points

@@ -1,0 +1,4 @@
+class ControlState will be used to track the current state of the user's controls (keys and mouse).
+It will consist of:
+    map(key -> bool) of key pressed. map[x] == true meaning that key x is pressed
+    mouse position relative to the window

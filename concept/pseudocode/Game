@@ -1,0 +1,6 @@
+class Game will represent the whole game, consisting of:
+    world
+    functionality to create and run the game from the outside
+        running it means starting the game loop - updating and drawing each frame
+    functionality to update (used in the game loop) will create an object of type ControlState
+        and pass it as argument to update the world

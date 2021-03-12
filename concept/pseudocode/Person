@@ -1,0 +1,8 @@
+Person will be a base class for Player and Enemy.
+It will consist of:
+    head sprite
+    gun sprite
+    target point
+    functionality to point the head and the gun towards the target point
+    functionality to shoot out a bullet
+    health points

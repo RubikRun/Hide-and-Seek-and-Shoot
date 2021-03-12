@@ -1,0 +1,8 @@
+class World will consist of:
+    size in pixels
+    texture
+    walls[] + functionality to load them from a file
+    player
+    enemy
+    vector<bullet>
+    functionality to update according to a ControlState object
