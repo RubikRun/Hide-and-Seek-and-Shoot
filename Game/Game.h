@@ -2,6 +2,13 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <string>
+
+typedef std::map<std::string, std::string> Config;
+
+namespace HideAndSeekAndShoot
+{
+
 /**
  * A class for easily creating and running the Game.
  */
@@ -25,7 +32,7 @@ class Game
      */
     ~Game();
 
-  private:
+  private: /* functions */
 
     /// Updates the game for the next frame.
     void Update();
@@ -33,8 +40,13 @@ class Game
     /// Draws the game to the window
     void Draw();
 
-  private:
+  private: /* variables */
 
     /// The window where the game is rendered
     sf::RenderWindow _window;
+
+    /// Game configuration
+    Config _config;
 };
+
+} // namespace HideAndSeekAndShoot

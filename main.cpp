@@ -2,7 +2,7 @@
 
 int main()
 {
-    Game game;
+    HideAndSeekAndShoot::Game game;
     game.Run();
 
     return 0;

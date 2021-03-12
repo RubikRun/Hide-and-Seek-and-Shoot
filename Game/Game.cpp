@@ -1,13 +1,20 @@
 #include "Game.h"
 
+#include "utils/configUtils.hpp"
+
 namespace
 {
 
-int const FRAMERATE_LIMIT = 60;
+auto constexpr GAME_CONFIG_FILENAME = "Game/config/game.conf";
+
+int const FRAMERATE_LIMIT_DEFAULT = 60;
 
 sf::Keyboard::Key const KEY_QUIT_GAME = sf::Keyboard::Escape;
 
 } // namespace
+
+namespace HideAndSeekAndShoot
+{
 
 Game::Game()
     : _window( // Initialize window to be fullscreen
@@ -15,10 +22,17 @@ Game::Game()
             sf::VideoMode::getDesktopMode().width,
             sf::VideoMode::getDesktopMode().height),
         "",
-        sf::Style::Fullscreen)
+        sf::Style::Fullscreen),
+    _config(ConfigUtils::ReadConfig(GAME_CONFIG_FILENAME))
 {
-    // Set frame rate limit to not torture the GPU too much
-    _window.setFramerateLimit(FRAMERATE_LIMIT);
+    // Get framerate limit from the config, if specified, otherwise use default
+    int frameRateLimit = FRAMERATE_LIMIT_DEFAULT;
+    if (_config.find("framerate_limit") != _config.end())
+    {
+        frameRateLimit = std::stoi(_config["framerate_limit"]);
+    }
+    // Set framerate limit to not torture the GPU too much and for smoother movement
+    _window.setFramerateLimit(frameRateLimit);
 
     // Enable vertical sync for screens that get screen tearing
     _window.setVerticalSyncEnabled(true);
@@ -60,3 +74,5 @@ void Game::Update()
 
 void Game::Draw()
 { /* nothing */ }
+
+} // namespace HideAndSeekAndShoot
