@@ -7,6 +7,9 @@ namespace
 
 auto constexpr GAME_CONFIG_FILENAME = "Game/config/game.conf";
 
+int const WINDOW_WIDTH_DEFAULT = 1080;
+int const WINDOW_HEIGHT_DEFAULT = 640;
+
 int const FRAMERATE_LIMIT_DEFAULT = 60;
 
 sf::Keyboard::Key const KEY_QUIT_GAME = sf::Keyboard::Escape;
@@ -17,22 +20,9 @@ namespace HideAndSeekAndShoot
 {
 
 Game::Game()
-    : _window( // Initialize window to be fullscreen
-        sf::VideoMode(
-            sf::VideoMode::getDesktopMode().width,
-            sf::VideoMode::getDesktopMode().height),
-        "",
-        sf::Style::Fullscreen),
-    _config(ConfigUtils::ReadConfig(GAME_CONFIG_FILENAME))
+    : _config(ConfigUtils::ReadConfig(GAME_CONFIG_FILENAME))
 {
-    // Get framerate limit from the config, if specified, otherwise use default
-    int frameRateLimit = FRAMERATE_LIMIT_DEFAULT;
-    if (_config.find("framerate_limit") != _config.end())
-    {
-        frameRateLimit = std::stoi(_config["framerate_limit"]);
-    }
-    // Set framerate limit to not torture the GPU too much and for smoother movement
-    _window.setFramerateLimit(frameRateLimit);
+    ConfigWindow();
 
     // Enable vertical sync for screens that get screen tearing
     _window.setVerticalSyncEnabled(true);
@@ -47,9 +37,10 @@ void Game::Run()
         sf::Event event;
         while (_window.pollEvent(event))
         {
-            // If the player has pressed the quit key, we close the window
-            if (event.type == sf::Event::KeyPressed
+            // If the player has pressed the quit key or X button, we close the window
+            if ((event.type == sf::Event::KeyPressed
                 && event.key.code == KEY_QUIT_GAME)
+                || event.type == sf::Event::Closed)
             {
                 _window.close();
             }
@@ -74,5 +65,59 @@ void Game::Update()
 
 void Game::Draw()
 { /* nothing */ }
+
+void Game::ConfigWindow()
+{
+    if (_config.find("fullscreen") != _config.end())
+    {
+        if (_config["fullscreen"] == "on")
+        {
+            // if it is specified that fullscreen is on, create fullscreen window
+            _window.create(
+                sf::VideoMode(
+                    sf::VideoMode::getDesktopMode().width,
+                    sf::VideoMode::getDesktopMode().height
+                ),
+                "",
+                sf::Style::Fullscreen
+            );
+
+            return;
+        }
+    }
+
+    int width = WINDOW_WIDTH_DEFAULT;
+    int height = WINDOW_HEIGHT_DEFAULT;
+    if (_config.find("resolution") != _config.end())
+    {
+        std::string resolution = _config["resolution"];
+
+        // The 'x' acting as the separator between width and height in a resolution (eg. 640x460)
+        size_t xIndex = resolution.find('x');
+        if (xIndex == std::string::npos)
+        {
+            throw std::runtime_error("Resolution specified in the game config file is not in the correct format.");
+        }
+        
+        // Separate width and height from the resolution
+        width = std::stoi(resolution.substr(0, xIndex));
+        height = std::stoi(resolution.substr(xIndex + 1));
+    }
+
+    // Create window with the resolution
+    _window.create(
+        sf::VideoMode(width, height),
+        "Hide and Seek and Shoot",
+        sf::Style::Default
+    );
+
+    // Get framerate limit from the config, if specified, otherwise use default
+    int frameRateLimit = FRAMERATE_LIMIT_DEFAULT;
+    if (_config.find("framerate_limit") != _config.end())
+    {
+        frameRateLimit = std::stoi(_config["framerate_limit"]);
+    }
+    _window.setFramerateLimit(frameRateLimit);
+}
 
 } // namespace HideAndSeekAndShoot

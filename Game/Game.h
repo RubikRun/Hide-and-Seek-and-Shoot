@@ -40,6 +40,11 @@ class Game
     /// Draws the game to the window
     void Draw();
 
+    /**
+     * Configures and creates the window with resolution and framerate limit specified in the config.
+     */
+    void ConfigWindow();
+
   private: /* variables */
 
     /// The window where the game is rendered
