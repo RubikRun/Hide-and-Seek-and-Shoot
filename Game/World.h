@@ -3,6 +3,9 @@
 #include <SFML/Graphics.hpp>
 
 #include <string>
+#include <vector>
+
+typedef std::map<std::string, std::string> Config;
 
 namespace HideAndSeekAndShoot
 {
@@ -22,20 +25,26 @@ class World
     World();
 
     /**
-     * Creates a world with size and texture for the background
+     * Creates a world with size and textures
      * 
      * @param[in] size
      *  Size of the world, width and height, in pixels
-     * @param[in] bgTexFilename
-     *  Texture for the background of the world
+     * @param[in] bgTex
+     *  Pointer to loaded texture to be used for the background of the world
+     * @param[in] wallTex
+     *  Pointer to loaded texture to be used for walls
      */
     World(
         sf::Vector2f size,
-        sf::Texture const& bgTex
+        sf::Texture const* bgTex = nullptr,
+        sf::Texture const* wallTex = nullptr
     );
 
     /// Setter for the background of the world
-    void SetBackgroundTexture(sf::Texture const& bgTex);
+    void SetBackgroundTexture(sf::Texture const* bgTex);
+
+    /// Setter for the texture used for walls
+    void SetWallTexture(sf::Texture const* wallTex);
 
     /// Getter and setter for world's size
     sf::Vector2f GetSize() const;
@@ -52,14 +61,31 @@ class World
      */
     void DrawOn(sf::RenderTarget& renderTarget) const;
 
-  private:
+    /// Generate walls according to the current world size
+    void GenerateWalls();
+
+  private: /* functions */
+
+    /// Loads walls' relative coordinates from config file
+    void LoadRelWalls();
+
+  private: /* variables */
     
     /// Size of the world, in pixels
     sf::Vector2f _size;
 
     /// Texture and sprite for the background of the world
-    sf::Texture _bgTex;
+    sf::Texture const* _bgTex;
     sf::Sprite _bgSprite;
+
+    /// Vector of walls, as convex shapes
+    std::vector<sf::ConvexShape> _walls;
+    /// Vector of walls coordinates relative to the size of the world
+    std::vector<std::vector<sf::Vector2f>> _relWalls;
+    /// Config for walls' relative coordinates
+    Config _wallsConfig;
+    /// Pointer to a loaded texture to be used for walls
+    sf::Texture const* _wallTex;
 };
 
 } // namespace HideAndSeekAndShoot

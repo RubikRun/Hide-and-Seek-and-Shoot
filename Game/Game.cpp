@@ -11,6 +11,7 @@ int const WINDOW_HEIGHT_DEFAULT = 720;
 int const FRAMERATE_LIMIT_DEFAULT = 60;
 
 auto constexpr BACKGROUND_TEXTURE_FILENAME = "Game/resources/textures/background.png";
+auto constexpr WALL_TEXTURE_FILENAME = "Game/resources/textures/wall.png";
 
 sf::Keyboard::Key const KEY_QUIT_GAME = sf::Keyboard::Escape;
 
@@ -129,12 +130,15 @@ void Game::ConfigWindow()
 void Game::LoadResources()
 {
     _textureHandler.Load(Resources::Texture::Id::Background, BACKGROUND_TEXTURE_FILENAME);
+    _textureHandler.Load(Resources::Texture::Id::Wall, WALL_TEXTURE_FILENAME);
 }
 
 void Game::SetupWorld()
 {
     _world.SetSize((sf::Vector2f)_window.getSize());
-    _world.SetBackgroundTexture(_textureHandler.Get(Resources::Texture::Id::Background));
+    _world.SetBackgroundTexture(&_textureHandler.Get(Resources::Texture::Id::Background));
+    _world.SetWallTexture(&_textureHandler.Get(Resources::Texture::Id::Wall));
+    _world.GenerateWalls();
 }
 
 } // namespace HideAndSeekAndShoot

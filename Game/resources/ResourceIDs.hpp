@@ -10,7 +10,7 @@ namespace HideAndSeekAndShoot
 
         namespace Texture
         {
-            enum class Id { Background };
+            enum class Id { Background, Wall };
         }
 
         namespace Sound
