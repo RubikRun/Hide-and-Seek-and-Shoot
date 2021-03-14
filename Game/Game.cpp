@@ -6,11 +6,11 @@ namespace
 {
 
 auto constexpr GAME_CONFIG_FILENAME = "Game/config/game.conf";
-
-int const WINDOW_WIDTH_DEFAULT = 1080;
-int const WINDOW_HEIGHT_DEFAULT = 640;
-
+int const WINDOW_WIDTH_DEFAULT = 1280;
+int const WINDOW_HEIGHT_DEFAULT = 720;
 int const FRAMERATE_LIMIT_DEFAULT = 60;
+
+auto constexpr BACKGROUND_TEXTURE_FILENAME = "Game/resources/textures/background.png";
 
 sf::Keyboard::Key const KEY_QUIT_GAME = sf::Keyboard::Escape;
 
@@ -23,9 +23,8 @@ Game::Game()
     : _config(ConfigUtils::ReadConfig(GAME_CONFIG_FILENAME))
 {
     ConfigWindow();
-
-    // Enable vertical sync for screens that get screen tearing
-    _window.setVerticalSyncEnabled(true);
+    LoadResources();
+    SetupWorld();
 }
 
 void Game::Run()
@@ -61,10 +60,14 @@ Game::~Game()
 { /* nothing */ }
 
 void Game::Update()
-{ /* nothing */ }
+{
+    _world.Update();
+}
 
 void Game::Draw()
-{ /* nothing */ }
+{
+    _world.DrawOn(_window);
+}
 
 void Game::ConfigWindow()
 {
@@ -118,6 +121,20 @@ void Game::ConfigWindow()
         frameRateLimit = std::stoi(_config["framerate_limit"]);
     }
     _window.setFramerateLimit(frameRateLimit);
+
+    // Enable vertical sync for screens that get screen tearing
+    _window.setVerticalSyncEnabled(true);
+}
+
+void Game::LoadResources()
+{
+    _textureHandler.Load(Resources::Texture::Id::Background, BACKGROUND_TEXTURE_FILENAME);
+}
+
+void Game::SetupWorld()
+{
+    _world.SetSize((sf::Vector2f)_window.getSize());
+    _world.SetBackgroundTexture(_textureHandler.Get(Resources::Texture::Id::Background));
 }
 
 } // namespace HideAndSeekAndShoot

@@ -3,7 +3,10 @@ cmake_minimum_required (VERSION 3.18.4)
 project(hide-and-seek-and-shoot)
 
 # Configure compilation
-add_executable(game main.cpp Game/Game.cpp)
+add_executable(game
+    main.cpp
+    Game/Game.cpp
+    Game/World.cpp)
 
 # Configure SFML
 target_include_directories(game
