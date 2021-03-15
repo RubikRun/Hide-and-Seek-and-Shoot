@@ -53,6 +53,11 @@ class World : public sf::Drawable
     /// Updates world for next frame
     void Update();
 
+    /// Generate walls according to the current world size
+    void GenerateWalls();
+
+  private: /* functions */
+
     /**
      * Draws the world on the given render target
      * 
@@ -60,11 +65,6 @@ class World : public sf::Drawable
      *  RenderTarget object on which to draw the world
      */
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-
-    /// Generate walls according to the current world size
-    void GenerateWalls();
-
-  private: /* functions */
 
     /// Loads walls' relative coordinates from config file
     void LoadRelWalls();
