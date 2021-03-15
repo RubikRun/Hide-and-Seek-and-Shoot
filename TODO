@@ -1,0 +1,10 @@
+- Maybe remove sf::Texture const* members from World class (and maybe other classes).
+    because sf::Sprite has a method getTexture() and so keeping a pointer to the texture is redundant.
+    I think so. I need to check it through.
+
+- BUG0 (stretching bug) (DONE)
+
+- BUG1 (small shape texture bug)
+    When shapes (walls) are very small, relative to their texture,
+    I want to scale down the texture accordingly.
+    Maybe keep some scale factor in the config file
