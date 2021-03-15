@@ -14,7 +14,7 @@ namespace HideAndSeekAndShoot
  * A class representing the world in the game.
  * Keeps track of all the entities and handles control states.
  */
-class World
+class World : public sf::Drawable
 {
 
   public:
@@ -59,7 +59,7 @@ class World
      * @param[in] renderTarget
      *  RenderTarget object on which to draw the world
      */
-    void DrawOn(sf::RenderTarget& renderTarget) const;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     /// Generate walls according to the current world size
     void GenerateWalls();

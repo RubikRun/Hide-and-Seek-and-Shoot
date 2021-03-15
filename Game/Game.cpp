@@ -67,7 +67,7 @@ void Game::Update()
 
 void Game::Draw()
 {
-    _world.DrawOn(_window);
+    _window.draw(_world);
 }
 
 void Game::ConfigWindow()

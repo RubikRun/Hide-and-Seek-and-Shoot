@@ -4,7 +4,6 @@
 #include "utils/textureUtils.hpp"
 
 #include <stdexcept>
-#include <iostream>
 
 namespace
 {
@@ -87,13 +86,13 @@ void World::SetSize(sf::Vector2f const& size)
 void World::Update()
 { /* nothing */ }
 
-void World::DrawOn(sf::RenderTarget& renderTarget) const
+void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    renderTarget.draw(_bgSprite);
+    target.draw(_bgSprite, states);
     
     for (int wallInd = 0; wallInd < _walls.size(); wallInd++)
     {
-        renderTarget.draw(_walls[wallInd]);
+        target.draw(_walls[wallInd], states);
     }
 }
 
