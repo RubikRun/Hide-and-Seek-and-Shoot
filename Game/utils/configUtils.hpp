@@ -1,3 +1,5 @@
+/* only meant to be included in source files */
+
 #include <fstream>
 #include <string>
 #include <map>

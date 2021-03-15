@@ -1,8 +1,10 @@
 #include "World.h"
 
 #include "utils/configUtils.hpp"
+#include "utils/textureUtils.hpp"
 
 #include <stdexcept>
+#include <iostream>
 
 namespace
 {
@@ -38,6 +40,10 @@ World::World(
 void World::SetBackgroundTexture(sf::Texture const* bgTex)
 {
     _bgTex = bgTex;
+    if (bgTex == nullptr)
+    {
+        return;
+    }
 
     _bgSprite.setTexture(*bgTex);
     _bgSprite.scale(
@@ -49,7 +55,6 @@ void World::SetBackgroundTexture(sf::Texture const* bgTex)
 void World::SetWallTexture(sf::Texture const* wallTex)
 {
     _wallTex = wallTex;
-
     if (wallTex == nullptr)
     {
         return;
@@ -57,19 +62,11 @@ void World::SetWallTexture(sf::Texture const* wallTex)
 
     for (int wallInd = 0; wallInd < _walls.size(); wallInd++)
     {
-        _walls[wallInd].setTexture(wallTex);
-        // TODO: fix stretching bug
-        /* stretching bug description:
-        When a wall is very thin (not in same ratio as the texture),
-        I don't want it to use the whole texture and stretch it,
-        but rather crop from the texture a rectangle with appropriate ratio.
-        This can be done with setTextureRect() method of ConvexShape,
-        but it doesn't act well when the wall is bigger than the texture.
-        The areas that are not covered by the texture are drawn with
-        the outermost color of the texture, which is not nice.
-        When it happens that the wall is bigger than the texture
-        I want to crop the appropriate ratio textureRect from the texture
-        and stretch it so that it fills the whole wall. */
+        TextureUtils::SetTextureKeepRatio(
+            &_walls[wallInd],
+            wallTex,
+            sf::Vector2i(0, 0)
+        );
     }
 }
 
@@ -144,9 +141,10 @@ void World::GenerateWalls()
                 _relWalls[wallInd][verInd].x * _size.x,
                 _relWalls[wallInd][verInd].y * _size.y
             ));
-            SetWallTexture(_wallTex);
         }
     }
+
+    SetWallTexture(_wallTex);
 }
 
 } // namespace HideAndSeekAndShoot
