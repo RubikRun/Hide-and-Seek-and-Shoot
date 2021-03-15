@@ -1,7 +1,3 @@
-- Maybe remove sf::Texture const* members from World class (and maybe other classes).
-    because sf::Sprite has a method getTexture() and so keeping a pointer to the texture is redundant.
-    I think so. I need to check it through.
-
 - BUG0 (stretching bug) (DONE)
 
 - BUG1 (small shape texture bug)

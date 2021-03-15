@@ -16,8 +16,7 @@ namespace HideAndSeekAndShoot
 {
 
 World::World()
-    : _bgTex(nullptr),
-    _wallTex(nullptr),
+    : _wallTex(nullptr),
     _player(this)
 {
     LoadRelWalls();
@@ -27,8 +26,7 @@ World::World(
     sf::Vector2f size,
     sf::Texture const* bgTex,
     sf::Texture const* wallTex)
-    : _bgTex(bgTex),
-    _wallTex(wallTex),
+    : _wallTex(wallTex),
     _player(this)
 {
     SetSize(size);
@@ -40,7 +38,6 @@ World::World(
 
 void World::SetBackgroundTexture(sf::Texture const* bgTex)
 {
-    _bgTex = bgTex;
     if (bgTex == nullptr)
     {
         return;

@@ -80,7 +80,6 @@ class World : public sf::Drawable
     sf::Vector2f _size;
 
     /// Texture and sprite for the background of the world
-    sf::Texture const* _bgTex;
     sf::Sprite _bgSprite;
 
     /// Vector of walls, as convex shapes
