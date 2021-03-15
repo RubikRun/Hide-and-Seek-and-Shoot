@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Entities/Person.h"
+
 #include <SFML/Graphics.hpp>
 
 #include <string>
@@ -56,6 +58,9 @@ class World : public sf::Drawable
     /// Generate walls according to the current world size
     void GenerateWalls();
 
+    /// Player getter (testing Person class, TODO: remove later)
+    Person& GetPlayer();
+
   private: /* functions */
 
     /**
@@ -86,6 +91,9 @@ class World : public sf::Drawable
     Config _wallsConfig;
     /// Pointer to a loaded texture to be used for walls
     sf::Texture const* _wallTex;
+
+    /// Player object (testing Person class, TODO: remove later)
+    Person _player;
 };
 
 } // namespace HideAndSeekAndShoot

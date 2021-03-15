@@ -12,6 +12,7 @@ int const FRAMERATE_LIMIT_DEFAULT = 60;
 
 auto constexpr BACKGROUND_TEXTURE_FILENAME = "Game/resources/textures/background.png";
 auto constexpr WALL_TEXTURE_FILENAME = "Game/resources/textures/wall.png";
+auto constexpr PLAYER_HEAD_TEXTURE_FILENAME = "Game/resources/textures/playerHead.png";
 
 sf::Keyboard::Key const KEY_QUIT_GAME = sf::Keyboard::Escape;
 
@@ -131,6 +132,7 @@ void Game::LoadResources()
 {
     _textureHandler.Load(Resources::Texture::Id::Background, BACKGROUND_TEXTURE_FILENAME);
     _textureHandler.Load(Resources::Texture::Id::Wall, WALL_TEXTURE_FILENAME);
+    _textureHandler.Load(Resources::Texture::Id::PlayerHead, PLAYER_HEAD_TEXTURE_FILENAME);
 }
 
 void Game::SetupWorld()
@@ -139,6 +141,9 @@ void Game::SetupWorld()
     _world.SetBackgroundTexture(&_textureHandler.Get(Resources::Texture::Id::Background));
     _world.SetWallTexture(&_textureHandler.Get(Resources::Texture::Id::Wall));
     _world.GenerateWalls();
+
+    // (testing Player class, TODO: remove later)
+    _world.GetPlayer().SetHeadTexture(&_textureHandler.Get(Resources::Texture::Id::PlayerHead));
 }
 
 } // namespace HideAndSeekAndShoot

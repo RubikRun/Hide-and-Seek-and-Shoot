@@ -17,7 +17,8 @@ namespace HideAndSeekAndShoot
 
 World::World()
     : _bgTex(nullptr),
-    _wallTex(nullptr)
+    _wallTex(nullptr),
+    _player(this)
 {
     LoadRelWalls();
 }
@@ -27,7 +28,8 @@ World::World(
     sf::Texture const* bgTex,
     sf::Texture const* wallTex)
     : _bgTex(bgTex),
-    _wallTex(wallTex)
+    _wallTex(wallTex),
+    _player(this)
 {
     SetSize(size);
     SetBackgroundTexture(bgTex);
@@ -86,6 +88,32 @@ void World::SetSize(sf::Vector2f const& size)
 void World::Update()
 { /* nothing */ }
 
+void World::GenerateWalls()
+{
+    _walls = std::vector<sf::ConvexShape>(
+        _relWalls.size(),
+        sf::ConvexShape(4)
+    );
+
+    for (int wallInd = 0; wallInd < _walls.size(); wallInd++)
+    {
+        for (int verInd = 0; verInd < 4; verInd++)
+        {
+            _walls[wallInd].setPoint(verInd, sf::Vector2f(
+                _relWalls[wallInd][verInd].x * _size.x,
+                _relWalls[wallInd][verInd].y * _size.y
+            ));
+        }
+    }
+
+    SetWallTexture(_wallTex);
+}
+
+Person& World::GetPlayer()
+{
+    return _player;
+}
+
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_bgSprite, states);
@@ -94,6 +122,8 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(_walls[wallInd], states);
     }
+
+    target.draw(_player);
 }
 
 void World::LoadRelWalls()
@@ -123,27 +153,6 @@ void World::LoadRelWalls()
             _relWalls[wallInd][verInd] = getVertex(wallInd, verInd);
         }
     }
-}
-
-void World::GenerateWalls()
-{
-    _walls = std::vector<sf::ConvexShape>(
-        _relWalls.size(),
-        sf::ConvexShape(4)
-    );
-
-    for (int wallInd = 0; wallInd < _walls.size(); wallInd++)
-    {
-        for (int verInd = 0; verInd < 4; verInd++)
-        {
-            _walls[wallInd].setPoint(verInd, sf::Vector2f(
-                _relWalls[wallInd][verInd].x * _size.x,
-                _relWalls[wallInd][verInd].y * _size.y
-            ));
-        }
-    }
-
-    SetWallTexture(_wallTex);
 }
 
 } // namespace HideAndSeekAndShoot

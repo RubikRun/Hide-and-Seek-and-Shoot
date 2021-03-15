@@ -6,7 +6,8 @@ project(hide-and-seek-and-shoot)
 add_executable(game
     main.cpp
     Game/Game.cpp
-    Game/World.cpp)
+    Game/World.cpp
+    Game/Entities/Person.cpp)
 
 # Configure SFML
 target_include_directories(game
