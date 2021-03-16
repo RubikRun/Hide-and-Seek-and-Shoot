@@ -22,7 +22,8 @@ namespace HideAndSeekAndShoot
 {
 
 Game::Game()
-    : _config(ConfigUtils::ReadConfig(GAME_CONFIG_FILENAME))
+    : _config(ConfigUtils::ReadConfig(GAME_CONFIG_FILENAME)),
+    _controlState(_window)
 {
     ConfigWindow();
     LoadResources();
@@ -63,7 +64,8 @@ Game::~Game()
 
 void Game::Update()
 {
-    _world.Update();
+    _controlState.Update();
+    _world.Update(&_controlState);
 }
 
 void Game::Draw()

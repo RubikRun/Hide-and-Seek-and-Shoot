@@ -44,6 +44,26 @@ class Person : public sf::Drawable, public sf::Transformable
      */
     void SetHeadTexture(sf::Texture const* headTex);
 
+    /**
+     * Moves the person in the given direction with their speed.
+     * Perople have constant speed and so only a direction
+     * can be specified for their movement.
+     * 
+     * TODO: these methods will probably be made private later,
+     *  because the Player should be movable from the outside,
+     *  but the Enemy doesn't.
+     * 
+     * @param[in] dirVector (or xDir, yDir)
+     *  Vector specifying the direction of the movement.
+     *  Not to be confused with velocity vector.
+     *  The length of this vector doesn't matter, only its direction.
+     */
+    void MoveInDirection(sf::Vector2f const dirVector);
+    void MoveInDirection(float xDir, float yDir);
+
+    ///Updates the person for next frame
+    void Update();
+
   private: /* functions */
 
     /**
@@ -55,6 +75,20 @@ class Person : public sf::Drawable, public sf::Transformable
      *  States/mode of the rendering
      */
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+    /// Updates the person according to the data derived from sf::Transformable
+    void UpdateTransform();
+
+    /**
+     * Checks if a position is valid,
+     * meaning that it doesn't collide with anything and is within the map.
+     * 
+     * @param[in] position
+     *  Position whose validity to check
+     * 
+     * @return true for valid, false for invalid
+     */
+    bool IsPositionValid(sf::Vector2f const& position) const;
 
   private: /* variables */
 

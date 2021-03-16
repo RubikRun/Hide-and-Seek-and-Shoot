@@ -1,6 +1,7 @@
 #pragma once
 
 #include "World.h"
+#include "ControlState.h"
 #include "resources/ResourceHandler.hpp"
 #include "resources/ResourceIDs.hpp"
 
@@ -66,6 +67,9 @@ class Game
 
     /// World of the game
     World _world;
+
+    /// Current control state
+    ControlState _controlState;
 
     /// Game configuration
     Config _config;

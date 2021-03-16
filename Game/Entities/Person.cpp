@@ -3,10 +3,16 @@
 #include "../World.h"
 
 #include "../utils/configUtils.hpp"
+#include "../utils/geometryUtils.hpp"
+
+#include <iostream> // TODO: remove later
 
 namespace
 {
     auto constexpr PERSON_CONFIG_FILENAME = "Game/config/person.conf";
+
+    // TODO: this will later be a variable or in a config file, so that it can be different for different derived classes
+    float const PERSON_SPEED = 10.f;
 }
 
 namespace HideAndSeekAndShoot
@@ -50,11 +56,56 @@ void Person::SetHeadTexture(sf::Texture const* headTex)
             headSizeY / _headSprite.getLocalBounds().height
         );    
     }
+
+    // Sets head's origin to be its center, instead of the upper-left corner
+    _headSprite.setOrigin(
+        (float)_headSprite.getLocalBounds().width / 2,
+        (float)_headSprite.getLocalBounds().height / 2
+    );
+
+    sf::Transformable::setPosition(
+        (float)_headSprite.getGlobalBounds().width / 2.f,
+        (float)_headSprite.getGlobalBounds().height / 2.f
+    );
+}
+
+void Person::MoveInDirection(sf::Vector2f const dirVector)
+{
+    sf::Vector2f velocity = GeometryUtils::NormaliseVector(dirVector) * PERSON_SPEED;
+    sf::Vector2f nextPosition = sf::Transformable::getPosition() + velocity;
+
+    if (IsPositionValid(nextPosition))
+    {
+        sf::Transformable::setPosition(nextPosition);
+    }
+}
+
+void Person::MoveInDirection(float xDir, float yDir)
+{
+    MoveInDirection(sf::Vector2f(xDir, yDir));
+}
+
+void Person::Update()
+{
+    UpdateTransform();
 }
 
 void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_headSprite);
+}
+
+void Person::UpdateTransform()
+{
+    _headSprite.setPosition(sf::Transformable::getPosition());
+}
+
+bool Person::IsPositionValid(sf::Vector2f const& position) const
+{
+    return (position.x + (float)_headSprite.getGlobalBounds().width / 2 < _world->GetSize().x
+        && position.x - (float)_headSprite.getGlobalBounds().width / 2 >= 0
+        && position.y + (float)_headSprite.getGlobalBounds().height / 2 < _world->GetSize().y
+        && position.y - (float)_headSprite.getGlobalBounds().width / 2 >= 0);
 }
 
 } // namespace HideAndSeekAndShoot

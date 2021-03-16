@@ -1,5 +1,6 @@
 #include "World.h"
 
+#include "ControlState.h"
 #include "utils/configUtils.hpp"
 #include "utils/textureUtils.hpp"
 
@@ -82,9 +83,6 @@ void World::SetSize(sf::Vector2f const& size)
     _size = size;
 }
 
-void World::Update()
-{ /* nothing */ }
-
 void World::GenerateWalls()
 {
     _walls = std::vector<sf::ConvexShape>(
@@ -109,6 +107,20 @@ void World::GenerateWalls()
 Person& World::GetPlayer()
 {
     return _player;
+}
+
+void World::Update(ControlState const* controlState)
+{
+    if (controlState->IsUpPressed())
+        _player.MoveInDirection(0.f, -1.f);
+    if (controlState->IsDownPressed())
+        _player.MoveInDirection(0.f, 1.f);
+    if (controlState->IsLeftPressed())
+        _player.MoveInDirection(-1.f, 0.f);
+    if (controlState->IsRightPressed()) 
+        _player.MoveInDirection(1.f, 0.f);
+
+    _player.Update();
 }
 
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const

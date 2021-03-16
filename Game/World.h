@@ -12,6 +12,8 @@ typedef std::map<std::string, std::string> Config;
 namespace HideAndSeekAndShoot
 {
 
+class ControlState;
+
 /**
  * A class representing the world in the game.
  * Keeps track of all the entities and handles control states.
@@ -52,14 +54,19 @@ class World : public sf::Drawable
     sf::Vector2f GetSize() const;
     void SetSize(sf::Vector2f const& size);
 
-    /// Updates world for next frame
-    void Update();
-
     /// Generate walls according to the current world size
     void GenerateWalls();
 
     /// Player getter (testing Person class, TODO: remove later)
     Person& GetPlayer();
+
+    /**
+     * Updates world according to a control state
+     * 
+     * @param[in] controlState
+     *  State of user controls according to which the world will be updated
+     */
+    void Update(ControlState const* controlState);
 
   private: /* functions */
 
