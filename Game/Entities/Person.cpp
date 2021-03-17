@@ -12,10 +12,13 @@ namespace
     auto constexpr PERSON_CONFIG_FILENAME = "Game/config/person.conf";
 
     // TODO: this will later be a variable or in a config file, so that it can be different for different derived classes
-    float const PERSON_SPEED = 10.f;
+    float const PERSON_SPEED = 4.f;
 
     // TODO: probably move to a config file
     float const PERSON_MOVEMENT_STEP = 1.f;
+
+    // TODO: in config, also make it use relative coords
+    sf::Vector2f const PERSON_INTIAL_POSITION(300.f, 300.f);
 }
 
 namespace HideAndSeekAndShoot
@@ -26,6 +29,7 @@ Person::Person(World const* world)
     _headTex(nullptr),
     _config(ConfigUtils::ReadConfig(PERSON_CONFIG_FILENAME))
 {
+    sf::Transformable::setPosition(PERSON_INTIAL_POSITION);
 }
 
 void Person::SetHeadTexture(sf::Texture const* headTex)
@@ -65,12 +69,11 @@ void Person::SetHeadTexture(sf::Texture const* headTex)
         (float)_headSprite.getLocalBounds().width / 2,
         (float)_headSprite.getLocalBounds().height / 2
     );
+}
 
-    // Move the whole Person object such that it is not outside of the map
-    sf::Transformable::setPosition(
-        (float)_headSprite.getGlobalBounds().width / 2.f,
-        (float)_headSprite.getGlobalBounds().height / 2.f
-    );
+void Person::SetTargetPoint(sf::Vector2f const& targetPoint)
+{
+    _targetPoint = targetPoint;
 }
 
 void Person::MoveInDirection(sf::Vector2f const dirVector)
@@ -102,6 +105,7 @@ void Person::MoveInDirection(float xDir, float yDir)
 void Person::Update()
 {
     UpdateTransform();
+    PointHeadTowardsTargetPoint();
 }
 
 void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -114,12 +118,27 @@ void Person::UpdateTransform()
     _headSprite.setPosition(sf::Transformable::getPosition());
 }
 
+void Person::PointHeadTowardsTargetPoint()
+{
+    // Get normal direction vector from the head to the target point
+    sf::Vector2f dirVector = GeometryUtils::NormaliseVector(
+        _headSprite.getPosition() - _targetPoint);
+
+    float angle = acos(dirVector.x);
+    if (dirVector.y < 0)
+    {
+        angle = -angle;
+    }
+
+    _headSprite.setRotation(angle * 180.f / M_PI);
+}
+
 bool Person::IsPositionValid(sf::Vector2f const& position) const
 {
-    return (position.x + (float)_headSprite.getGlobalBounds().width / 2 < _world->GetSize().x
-        && position.x - (float)_headSprite.getGlobalBounds().width / 2 >= 0
-        && position.y + (float)_headSprite.getGlobalBounds().height / 2 < _world->GetSize().y
-        && position.y - (float)_headSprite.getGlobalBounds().height / 2 >= 0);
+    return (position.x < _world->GetSize().x
+        && position.x >= 0
+        && position.y < _world->GetSize().y
+        && position.y >= 0);
 }
 
 } // namespace HideAndSeekAndShoot

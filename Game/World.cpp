@@ -120,6 +120,8 @@ void World::Update(ControlState const& controlState)
     if (controlState.IsRightPressed()) 
         _player.MoveInDirection(1.f, 0.f);
 
+    _player.SetTargetPoint(controlState.GetMousePosition());
+    
     _player.Update();
 }
 

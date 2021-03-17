@@ -45,6 +45,16 @@ class Person : public sf::Drawable, public sf::Transformable
     void SetHeadTexture(sf::Texture const* headTex);
 
     /**
+     * Sets the target point of the Person.
+     * That is the point towards which the Person will be looking at all times,
+     * and towards which the Person can shoot.
+     * 
+     * @param[in] targetPoint
+     *  Target point to be set on the Person
+     */
+    void SetTargetPoint(sf::Vector2f const& targetPoint);
+
+    /**
      * Moves the person in the given direction with their speed.
      * People have constant speed and so only a direction
      * can be specified for their movement.
@@ -79,6 +89,9 @@ class Person : public sf::Drawable, public sf::Transformable
     /// Updates the person according to the data derived from sf::Transformable
     void UpdateTransform();
 
+    /// Rotates the head sprite so that it points towards the target point
+    void PointHeadTowardsTargetPoint();
+
     /**
      * Checks if a position is valid,
      * meaning that it doesn't collide with anything and is within the map.
@@ -98,6 +111,9 @@ class Person : public sf::Drawable, public sf::Transformable
     /// Sprite and texture for the head of the player
     sf::Texture const* _headTex;
     sf::Sprite _headSprite;
+
+    /// Target point, towards which the Person is always looking and can shoot
+    sf::Vector2f _targetPoint;
 
     /// Person configuration
     Config _config;
