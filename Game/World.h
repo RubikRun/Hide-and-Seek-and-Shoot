@@ -66,7 +66,7 @@ class World : public sf::Drawable
      * @param[in] controlState
      *  State of user controls according to which the world will be updated
      */
-    void Update(ControlState const* controlState);
+    void Update(ControlState const& controlState);
 
   private: /* functions */
 

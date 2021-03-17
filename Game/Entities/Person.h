@@ -46,7 +46,7 @@ class Person : public sf::Drawable, public sf::Transformable
 
     /**
      * Moves the person in the given direction with their speed.
-     * Perople have constant speed and so only a direction
+     * People have constant speed and so only a direction
      * can be specified for their movement.
      * 
      * TODO: these methods will probably be made private later,

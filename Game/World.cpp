@@ -109,15 +109,15 @@ Person& World::GetPlayer()
     return _player;
 }
 
-void World::Update(ControlState const* controlState)
+void World::Update(ControlState const& controlState)
 {
-    if (controlState->IsUpPressed())
+    if (controlState.IsUpPressed())
         _player.MoveInDirection(0.f, -1.f);
-    if (controlState->IsDownPressed())
+    if (controlState.IsDownPressed())
         _player.MoveInDirection(0.f, 1.f);
-    if (controlState->IsLeftPressed())
+    if (controlState.IsLeftPressed())
         _player.MoveInDirection(-1.f, 0.f);
-    if (controlState->IsRightPressed()) 
+    if (controlState.IsRightPressed()) 
         _player.MoveInDirection(1.f, 0.f);
 
     _player.Update();

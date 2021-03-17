@@ -65,7 +65,7 @@ Game::~Game()
 void Game::Update()
 {
     _controlState.Update();
-    _world.Update(&_controlState);
+    _world.Update(_controlState);
 }
 
 void Game::Draw()

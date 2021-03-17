@@ -4,3 +4,19 @@
     When shapes (walls) are very small, relative to their texture,
     I want to scale down the texture accordingly.
     Maybe keep some scale factor in the config file
+
+- BUG2 (mouse move while button pressed)
+    While a key is pressed, the mouse cannot be moved,
+    when using the track pad
+
+- BUG3 (cannot reach map edge with Person)
+    When a Person moves, they move with some constant speed,
+    hence some velocity vector with always the same length, say 10.
+    Then if the Person is say 8 pixels away from a map edge
+    and tries to move towards it, it will not move at all,
+    because my algorithm will find out that the next position
+    would be outside the map and will not move the Person at all.
+    However, what I want is not that.
+    What I want is, in such cases the Person to move towards an edge,
+    but stop at the edge. So technically they will move with a speed
+    less than their speed.

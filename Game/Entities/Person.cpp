@@ -13,6 +13,9 @@ namespace
 
     // TODO: this will later be a variable or in a config file, so that it can be different for different derived classes
     float const PERSON_SPEED = 10.f;
+
+    // TODO: probably move to a config file
+    float const PERSON_MOVEMENT_STEP = 1.f;
 }
 
 namespace HideAndSeekAndShoot
@@ -63,6 +66,7 @@ void Person::SetHeadTexture(sf::Texture const* headTex)
         (float)_headSprite.getLocalBounds().height / 2
     );
 
+    // Move the whole Person object such that it is not outside of the map
     sf::Transformable::setPosition(
         (float)_headSprite.getGlobalBounds().width / 2.f,
         (float)_headSprite.getGlobalBounds().height / 2.f
@@ -76,6 +80,16 @@ void Person::MoveInDirection(sf::Vector2f const dirVector)
 
     if (IsPositionValid(nextPosition))
     {
+        sf::Transformable::setPosition(nextPosition);
+    }
+    else
+    {
+        nextPosition = sf::Transformable::getPosition();
+        sf::Vector2f stepVector = GeometryUtils::NormaliseVector(dirVector) * PERSON_MOVEMENT_STEP;
+        while (IsPositionValid(nextPosition + stepVector))
+        {
+            nextPosition += stepVector;
+        }
         sf::Transformable::setPosition(nextPosition);
     }
 }
@@ -105,7 +119,7 @@ bool Person::IsPositionValid(sf::Vector2f const& position) const
     return (position.x + (float)_headSprite.getGlobalBounds().width / 2 < _world->GetSize().x
         && position.x - (float)_headSprite.getGlobalBounds().width / 2 >= 0
         && position.y + (float)_headSprite.getGlobalBounds().height / 2 < _world->GetSize().y
-        && position.y - (float)_headSprite.getGlobalBounds().width / 2 >= 0);
+        && position.y - (float)_headSprite.getGlobalBounds().height / 2 >= 0);
 }
 
 } // namespace HideAndSeekAndShoot
