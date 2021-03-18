@@ -100,6 +100,9 @@ class World : public sf::Drawable
 
     /// Player object (testing Person class, TODO: remove later)
     Person _player;
+
+    /// Set Person class to be a friend class so that it can access world's walls
+    friend class Person;
 };
 
 } // namespace HideAndSeekAndShoot

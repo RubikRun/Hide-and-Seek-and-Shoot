@@ -18,7 +18,7 @@ namespace
     float const PERSON_MOVEMENT_STEP = 1.f;
 
     // TODO: in config, also make it use relative coords
-    sf::Vector2f const PERSON_INTIAL_POSITION(300.f, 300.f);
+    sf::Vector2f const PERSON_INTIAL_POSITION(400.f, 400.f);
 }
 
 namespace HideAndSeekAndShoot
@@ -135,10 +135,21 @@ void Person::PointHeadTowardsTargetPoint()
 
 bool Person::IsPositionValid(sf::Vector2f const& position) const
 {
-    return (position.x < _world->GetSize().x
-        && position.x >= 0
-        && position.y < _world->GetSize().y
-        && position.y >= 0);
+    if (position.x >= _world->GetSize().x
+        || position.x < 0
+        || position.y >= _world->GetSize().y
+        || position.y < 0)
+    return false;
+
+    for (sf::ConvexShape const& wall : _world->_walls)
+    {
+        if (wall.getGlobalBounds().intersects(_headSprite.getGlobalBounds()))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 } // namespace HideAndSeekAndShoot

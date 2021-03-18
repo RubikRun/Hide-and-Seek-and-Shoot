@@ -1,4 +1,4 @@
-- BUG0 (stretching bug) (DONE)
+- BUG0 (stretching bug) (FIXED)
 
 - BUG1 (small shape texture bug)
     When shapes (walls) are very small, relative to their texture,
@@ -9,7 +9,7 @@
     While a key is pressed, the mouse cannot be moved,
     when using the track pad
 
-- BUG3 (cannot reach map edge with Person)
+- BUG3 (cannot reach map edge with Person) (FIXED)
     When a Person moves, they move with some constant speed,
     hence some velocity vector with always the same length, say 10.
     Then if the Person is say 8 pixels away from a map edge
@@ -20,3 +20,15 @@
     What I want is, in such cases the Person to move towards an edge,
     but stop at the edge. So technically they will move with a speed
     less than their speed.
+
+- BUG4 (sprite collision)
+    Sprite collision is not very well implemented in SFML.
+    It relies on a bounding rectangle parallel to the X and Y axes,
+    which is not good enough.
+    For now my idea of a fix is to use head sprites that are circular
+    and detect collisions with the radius.
+    Which is also not ideal, because it forces me to have circular heads,
+    but otherwise it would get too complicated.
+    Not to say it's not possible, I just don't want to deal with it in this game.
+    It is a side project for another time - generic sprite wrapper,
+    that can be used to define the sprite bounds to be any complex shape.
