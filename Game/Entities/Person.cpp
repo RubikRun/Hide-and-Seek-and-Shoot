@@ -19,6 +19,9 @@ namespace
 
     // TODO: in config, also make it use relative coords
     sf::Vector2f const PERSON_INTIAL_POSITION(400.f, 400.f);
+
+    // TODO: in config, and make it relative
+    float const PERSON_RADIUS = 50.f;
 }
 
 namespace HideAndSeekAndShoot
@@ -81,7 +84,7 @@ void Person::MoveInDirection(sf::Vector2f const dirVector)
     sf::Vector2f velocity = GeometryUtils::NormaliseVector(dirVector) * PERSON_SPEED;
     sf::Vector2f nextPosition = sf::Transformable::getPosition() + velocity;
 
-    if (IsPositionValid(nextPosition))
+    if (IsMoveValid(sf::Transformable::getPosition(), nextPosition))
     {
         sf::Transformable::setPosition(nextPosition);
     }
@@ -89,7 +92,7 @@ void Person::MoveInDirection(sf::Vector2f const dirVector)
     {
         nextPosition = sf::Transformable::getPosition();
         sf::Vector2f stepVector = GeometryUtils::NormaliseVector(dirVector) * PERSON_MOVEMENT_STEP;
-        while (IsPositionValid(nextPosition + stepVector))
+        while (IsMoveValid(sf::Transformable::getPosition(), nextPosition + stepVector))
         {
             nextPosition += stepVector;
         }
@@ -133,19 +136,42 @@ void Person::PointHeadTowardsTargetPoint()
     _headSprite.setRotation(angle * 180.f / M_PI);
 }
 
-bool Person::IsPositionValid(sf::Vector2f const& position) const
+bool Person::IsPositionInWorld(sf::Vector2f const& position) const
 {
-    if (position.x >= _world->GetSize().x
-        || position.x < 0
-        || position.y >= _world->GetSize().y
-        || position.y < 0)
-    return false;
+    return (position.x + PERSON_RADIUS < _world->GetSize().x
+        && position.x - PERSON_RADIUS >= 0
+        && position.y + PERSON_RADIUS < _world->GetSize().y
+        && position.y - PERSON_RADIUS >= 0);
+}
+
+bool Person::IsMoveValid(
+    sf::Vector2f const& start,
+    sf::Vector2f const& end) const
+{
+    if (!IsPositionInWorld(end))
+    {
+        return false;
+    }
+
+    // The point on the circle around player, that is in the direction of movement
+    sf::Vector2f const edgeEnd = end + GeometryUtils::NormaliseVector(
+        GeometryUtils::GetVector(start, end)
+    ) * PERSON_RADIUS;
+
 
     for (sf::ConvexShape const& wall : _world->_walls)
     {
-        if (wall.getGlobalBounds().intersects(_headSprite.getGlobalBounds()))
+        for (int i = 0; i < wall.getPointCount(); i++)
         {
-            return false;
+            if (GeometryUtils::SegmentsIntersect(
+                start,
+                edgeEnd,
+                wall.getPoint(i),
+                wall.getPoint((i + 1) % wall.getPointCount())
+            ))
+            {
+                return false;
+            }
         }
     }
 

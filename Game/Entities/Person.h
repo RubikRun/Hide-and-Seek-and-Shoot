@@ -93,15 +93,30 @@ class Person : public sf::Drawable, public sf::Transformable
     void PointHeadTowardsTargetPoint();
 
     /**
-     * Checks if a position is valid,
-     * meaning that it doesn't collide with anything and is within the map.
+     * Checks if a position is within the borders of the world
      * 
      * @param[in] position
-     *  Position whose validity to check
+     *  Position to check
      * 
-     * @return true for valid, false for invalid
+     * @return true for inside world, false otherwise
      */
-    bool IsPositionValid(sf::Vector2f const& position) const;
+    bool IsPositionInWorld(sf::Vector2f const& position) const;
+
+    /**
+     * Checks if a move is valid,
+     * meaning that it doesn't go through a wall or any other object.
+     * 
+     * @param[in] startPos
+     *  Starting position of the move
+     * @param[in] endPos
+     *  Ending position of the move
+     * 
+     * @return true if the move is valid, false otherwise
+     */
+    bool IsMoveValid(
+        sf::Vector2f const& startPos,
+        sf::Vector2f const& endPos)
+    const;
 
   private: /* variables */
 

@@ -77,6 +77,85 @@ float CalcDist(
     return GetVectorLength(GetVector(pointA, pointB));
 }
 
+/**
+ * Returns the orientation of two vectors.
+ * When first one is on the right of the second one,
+ * the function returns 1.
+ * If it's on the left, the function returns -1.
+ * If the two vectors are collinear, 0 is returned
+ * 
+ * @param[in] v1
+ *  First vector
+ * @param[in] v2
+ *  Second vector
+ * 
+ * @return 1, -1 or 0 depending on the orientation of the vectors
+ */
+int GetOrientation(
+    sf::Vector2f const& v1,
+    sf::Vector2f const& v2)
+{
+    int det = v1.x * v2.y - v1.y * v2.x;
+
+    if (det < 0) return -1;
+    if (det > 0) return 1;
+    return 0;
+}
+
+/**
+ * Checks if a line intersects a line segment.
+ * The infinite line is defined by two point A and B lying on it
+ * and the finite line segment is defined by its two end points C and D.
+ * 
+ * @param[in] A
+ *  A point lying on the line
+ * @param[in] B
+ *  Another point lying on the line
+ * @param[in] C
+ *  End point of the line segment
+ * @param[in] D
+ *  The other endpoint of the line segment
+ * 
+ * @return true when the line intersects the segment, false otherwise
+ */
+bool LineIntersectsSegment(
+    sf::Vector2f const& A,
+    sf::Vector2f const& B,
+    sf::Vector2f const& C,
+    sf::Vector2f const& D)
+{
+    int o1 = GetOrientation(GetVector(A, B), GetVector(B, C));
+    if (o1 == 0) return true;
+    int o2 = GetOrientation(GetVector(A, B), GetVector(B, D));
+    if (o2 == 0) return true;
+
+    return (o1 != o2);
+}
+
+/**
+ * Checks if two line segments intersect.
+ * The two line segments are defined by their endpoints A, B and C, D.
+ * 
+ * @param[in] A
+ *  First endpoint of the first segment
+ * @param[in] B
+ *  Second endpoint of the first segment
+ * @param[in] C
+ *  First endpoint of the second segment
+ * @param[in] D
+ *  Second endpoint of the second segment
+ * 
+ * @return true when the line segments intersect, false otherwise
+ */
+bool SegmentsIntersect(
+    sf::Vector2f const& A,
+    sf::Vector2f const& B,
+    sf::Vector2f const& C,
+    sf::Vector2f const& D)
+{
+    return LineIntersectsSegment(A, B, C, D) && LineIntersectsSegment(C, D, A, B);
+}
+
 } // namespace Geometry
 
 } // namespace
