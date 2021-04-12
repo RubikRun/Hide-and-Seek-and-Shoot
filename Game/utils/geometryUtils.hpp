@@ -134,16 +134,16 @@ bool LineIntersectsSegment(
 
 /**
  * Checks if two line segments intersect.
- * The two line segments are defined by their endpoints A, B and C, D.
+ * The two line segments are defined by their end points A, B and C, D.
  * 
  * @param[in] A
- *  First endpoint of the first segment
+ *  First end point of the first segment
  * @param[in] B
- *  Second endpoint of the first segment
+ *  Second end point of the first segment
  * @param[in] C
- *  First endpoint of the second segment
+ *  First end point of the second segment
  * @param[in] D
- *  Second endpoint of the second segment
+ *  Second end point of the second segment
  * 
  * @return true when the line segments intersect, false otherwise
  */
@@ -154,6 +154,125 @@ bool SegmentsIntersect(
     sf::Vector2f const& D)
 {
     return LineIntersectsSegment(A, B, C, D) && LineIntersectsSegment(C, D, A, B);
+}
+
+/**
+ * Finds the orthogonal projection of a point P onto a line.
+ * The line is defined by two points A and B lying on it.
+ * Orthogonal means perpendicular.
+ * If the found point is X, then PX will be perpendicular to the line
+ * 
+ * @param[in] P
+ *  The point that will be orthogonally projected on the line AB
+ * @param[in] A
+ *  Some point on the line
+ * @param[in] B
+ *  Another point on the line
+ * 
+ * @return orthogonal projection of the given point
+ */
+sf::Vector2f FindOrthogonalProjection(
+    sf::Vector2f const& P,
+    sf::Vector2f const& A,
+    sf::Vector2f const& B)
+{
+    float deltaX = B.x - A.x;
+    float deltaY = B.y - A.y;
+
+    float r = (deltaX * (P.x - A.x) + deltaY * (P.y - A.y))
+        / (deltaX * deltaX + deltaY * deltaY);
+
+    return {
+        A.x + r * deltaX,
+        A.y + r * deltaY
+    };
+}
+
+/**
+ * Finds the point on a line segment that is closest to a given point.
+ * 
+ * @param[in] A
+ *  First end point of the line segment
+ * @param[in] B
+ *  Second end point of the line segment
+ * @param[in] P
+ *  The point to which the found point should be closest
+ */
+sf::Vector2f FindClosestPointOnSegment(
+    sf::Vector2f const& A,
+    sf::Vector2f const& B,
+    sf::Vector2f const& P)
+{
+    if (A.x == B.x)
+    {
+        sf::Vector2f const* U = &A;
+        sf::Vector2f const* D = &B;
+
+        if (A.y > B.y)
+        {
+            U = &B;
+            D = &A;
+        }
+
+        if (P.y > U->y && P.y < D->y)
+        {
+            return {A.x, P.y};
+        }
+        
+        if (abs(A.y - P.y) < abs(B.y - P.y))
+        {
+            return A;
+        }
+        return B;
+    }
+
+    sf::Vector2f const Q = FindOrthogonalProjection(P, A, B);
+
+    sf::Vector2f const* L = &A;
+    sf::Vector2f const* R = &B;
+
+    if (A.x > B.x)
+    {
+        L = &B;
+        R = &A;
+    }
+
+    if (Q.x < L->x)
+    {
+        return *L;
+    }
+    if (Q.x > R->x)
+    {
+        return *R;
+    }
+    return Q;
+}
+
+/**
+ * Checks if a line segment intersects a circle.
+ * The segment is given by its two end points
+ * and the circle is given by its center and radius
+ * 
+ * @param[in] A
+ *  First end point of the line segment
+ * @param[in] B
+ *  Second end point of the line segment
+ * @param[in] center
+ *  Center point of the circle
+ * @param[in] radius
+ *  Radius of the circle
+ * 
+ * @return true if segment intersects circle, false otherwise
+ */
+bool SegmentIntersectsCircle(
+    sf::Vector2f const& A,
+    sf::Vector2f const& B,
+    sf::Vector2f const& center,
+    float const radius)
+{
+    sf::Vector2f const Q = FindClosestPointOnSegment(A, B, center);
+
+    return (radius * radius >= (Q.x - center.x) * (Q.x - center.x) + (Q.y - center.y) * (Q.y - center.y));
 }
 
 } // namespace Geometry

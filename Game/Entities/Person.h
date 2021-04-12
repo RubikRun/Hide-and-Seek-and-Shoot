@@ -103,6 +103,31 @@ class Person : public sf::Drawable, public sf::Transformable
     bool IsPositionInWorld(sf::Vector2f const& position) const;
 
     /**
+     * Checks if a position is outside of all the walls,
+     * meaning that it does not intersect with any one of them,
+     * meaning that there is no point lying inside the person's collision circle
+     * and inside a wall.
+     * 
+     * @param[in] position
+     *  Position to check
+     * 
+     * @return true for outside walls, false if there is an intersection with a wall
+     */
+    bool IsPositionOutsideWalls(sf::Vector2f const& position) const;
+
+    /**
+     * Checks if a position is valid,
+     * meaning that the player is inside the world's borders
+     * and he does not intersect with any walls.
+     * 
+     * @param[in] position
+     *  Position to check
+     * 
+     * @return true for valid position, false for invalid
+     */
+    bool IsPositionValid(sf::Vector2f const& position) const;
+
+    /**
      * Checks if a move is valid,
      * meaning that it doesn't go through a wall or any other object.
      * 
@@ -132,6 +157,11 @@ class Person : public sf::Drawable, public sf::Transformable
 
     /// Person configuration
     Config _config;
+
+    /* Person collisions with other objects are detected if the other object is
+        within this radius to the player's center.
+        Essentially a person is a circle for the collision detection. */
+    float _collisionRadius;
 };
 
 } // namespace HideAndSeekAndShoot

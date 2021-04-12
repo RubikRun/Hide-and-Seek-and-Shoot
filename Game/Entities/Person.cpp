@@ -5,6 +5,8 @@
 #include "../utils/configUtils.hpp"
 #include "../utils/geometryUtils.hpp"
 
+#include <cmath>
+
 #include <iostream> // TODO: remove later
 
 namespace
@@ -12,16 +14,13 @@ namespace
     auto constexpr PERSON_CONFIG_FILENAME = "Game/config/person.conf";
 
     // TODO: this will later be a variable or in a config file, so that it can be different for different derived classes
-    float const PERSON_SPEED = 4.f;
+    float const PERSON_SPEED = 15.f;
 
     // TODO: probably move to a config file
     float const PERSON_MOVEMENT_STEP = 1.f;
 
     // TODO: in config, also make it use relative coords
     sf::Vector2f const PERSON_INTIAL_POSITION(400.f, 400.f);
-
-    // TODO: in config, and make it relative
-    float const PERSON_RADIUS = 50.f;
 }
 
 namespace HideAndSeekAndShoot
@@ -64,7 +63,15 @@ void Person::SetHeadTexture(sf::Texture const* headTex)
         _headSprite.setScale(
             headSizeX / _headSprite.getLocalBounds().width,
             headSizeY / _headSprite.getLocalBounds().height
-        );    
+        );
+
+        _collisionRadius = sqrt(
+                headSizeX * headSizeX / 4 +
+                headSizeY * headSizeY / 4);
+        if (_config.find("collision_radius_scale") != _config.end())
+        {
+            _collisionRadius *= std::stof(_config["collision_radius_scale"]);
+        }
     }
 
     // Sets head's origin to be its center, instead of the upper-left corner
@@ -84,7 +91,7 @@ void Person::MoveInDirection(sf::Vector2f const dirVector)
     sf::Vector2f velocity = GeometryUtils::NormaliseVector(dirVector) * PERSON_SPEED;
     sf::Vector2f nextPosition = sf::Transformable::getPosition() + velocity;
 
-    if (IsMoveValid(sf::Transformable::getPosition(), nextPosition))
+    if (IsPositionValid(nextPosition))
     {
         sf::Transformable::setPosition(nextPosition);
     }
@@ -92,7 +99,7 @@ void Person::MoveInDirection(sf::Vector2f const dirVector)
     {
         nextPosition = sf::Transformable::getPosition();
         sf::Vector2f stepVector = GeometryUtils::NormaliseVector(dirVector) * PERSON_MOVEMENT_STEP;
-        while (IsMoveValid(sf::Transformable::getPosition(), nextPosition + stepVector))
+        while (IsPositionValid(nextPosition + stepVector))
         {
             nextPosition += stepVector;
         }
@@ -114,6 +121,16 @@ void Person::Update()
 void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_headSprite);
+
+    // Visual debugging to see the collision circle
+    sf::CircleShape circle(_collisionRadius);
+    circle.setOrigin(_collisionRadius, _collisionRadius);
+    circle.setPosition(_headSprite.getPosition());
+    circle.setFillColor(sf::Color::Transparent);
+    circle.setOutlineColor(sf::Color(255, 0, 0, 150));
+    circle.setOutlineThickness(2.f);
+
+    target.draw(circle);
 }
 
 void Person::UpdateTransform()
@@ -138,10 +155,37 @@ void Person::PointHeadTowardsTargetPoint()
 
 bool Person::IsPositionInWorld(sf::Vector2f const& position) const
 {
-    return (position.x + PERSON_RADIUS < _world->GetSize().x
-        && position.x - PERSON_RADIUS >= 0
-        && position.y + PERSON_RADIUS < _world->GetSize().y
-        && position.y - PERSON_RADIUS >= 0);
+    return (position.x + _collisionRadius < _world->GetSize().x
+        && position.x - _collisionRadius >= 0
+        && position.y + _collisionRadius < _world->GetSize().y
+        && position.y - _collisionRadius >= 0);
+}
+
+bool Person::IsPositionOutsideWalls(sf::Vector2f const& position) const
+{
+    for (sf::ConvexShape const& wall : _world->_walls)
+    {
+        for (int i = 0; i < wall.getPointCount(); i++)
+        {
+            if (GeometryUtils::SegmentIntersectsCircle(
+                    wall.getPoint(i),
+                    wall.getPoint((i + 1) % wall.getPointCount()),
+                    position,
+                    _collisionRadius
+                )
+            )
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool Person::IsPositionValid(sf::Vector2f const& position) const
+{
+    return IsPositionInWorld(position) && IsPositionOutsideWalls(position);
 }
 
 bool Person::IsMoveValid(
@@ -156,7 +200,7 @@ bool Person::IsMoveValid(
     // The point on the circle around player, that is in the direction of movement
     sf::Vector2f const edgeEnd = end + GeometryUtils::NormaliseVector(
         GeometryUtils::GetVector(start, end)
-    ) * PERSON_RADIUS;
+    ) * _collisionRadius;
 
 
     for (sf::ConvexShape const& wall : _world->_walls)
@@ -164,11 +208,12 @@ bool Person::IsMoveValid(
         for (int i = 0; i < wall.getPointCount(); i++)
         {
             if (GeometryUtils::SegmentsIntersect(
-                start,
-                edgeEnd,
-                wall.getPoint(i),
-                wall.getPoint((i + 1) % wall.getPointCount())
-            ))
+                    start,
+                    edgeEnd,
+                    wall.getPoint(i),
+                    wall.getPoint((i + 1) % wall.getPointCount())
+                )
+            )
             {
                 return false;
             }
