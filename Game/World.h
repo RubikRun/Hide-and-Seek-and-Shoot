@@ -86,7 +86,7 @@ class World : public sf::Drawable
     /// Size of the world, in pixels
     sf::Vector2f _size;
 
-    /// Texture and sprite for the background of the world
+    /// Sprite for the background of the world
     sf::Sprite _bgSprite;
 
     /// Vector of walls, as convex shapes
@@ -101,7 +101,8 @@ class World : public sf::Drawable
     /// Player object (testing Person class, TODO: remove later)
     Person _player;
 
-    /// Set Person class to be a friend class so that it can access world's walls
+    /// Declare Person class to be a friend class so that it can access world's walls
+    /// (TODO: think about it, probably not the greatest idea)
     friend class Person;
 };
 

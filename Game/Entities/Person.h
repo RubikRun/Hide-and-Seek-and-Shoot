@@ -18,7 +18,7 @@ class World;
  *  - a head
  *  - a gun
  * and functionally consists of:
- *  - managed movement, to keep within the world
+ *  - managed movement, to keep within the world and not collide with walls or other Person objects
  *  - pointing the head and gun towards a target point
  *  - shooting a bullet towards a target point
  *  - health points management
@@ -61,7 +61,7 @@ class Person : public sf::Drawable, public sf::Transformable
      * 
      * TODO: these methods will probably be made private later,
      *  because the Player should be movable from the outside,
-     *  but the Enemy doesn't.
+     *  but the Enemy should not.
      * 
      * @param[in] dirVector (or xDir, yDir)
      *  Vector specifying the direction of the movement.
@@ -127,29 +127,12 @@ class Person : public sf::Drawable, public sf::Transformable
      */
     bool IsPositionValid(sf::Vector2f const& position) const;
 
-    /**
-     * Checks if a move is valid,
-     * meaning that it doesn't go through a wall or any other object.
-     * 
-     * @param[in] startPos
-     *  Starting position of the move
-     * @param[in] endPos
-     *  Ending position of the move
-     * 
-     * @return true if the move is valid, false otherwise
-     */
-    bool IsMoveValid(
-        sf::Vector2f const& startPos,
-        sf::Vector2f const& endPos)
-    const;
-
   private: /* variables */
 
     /// The world to which the person belongs
     World const* _world;
 
-    /// Sprite and texture for the head of the player
-    sf::Texture const* _headTex;
+    /// Sprite for the head of the player
     sf::Sprite _headSprite;
 
     /// Target point, towards which the Person is always looking and can shoot

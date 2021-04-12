@@ -33,7 +33,7 @@ namespace TextureUtils
 void SetTextureKeepRatio(
     sf::Shape* shape,
     sf::Texture const* tex,
-    sf::Vector2i const& cropPosition)
+    sf::Vector2i const& cropPosition = {0, 0})
 {
     shape->setTexture(tex);
 

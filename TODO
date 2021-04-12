@@ -5,7 +5,7 @@
     I want to scale down the texture accordingly.
     Maybe keep some scale factor in the config file
 
-- BUG2 (mouse move while button pressed)
+- BUG2 (mouse move while button pressed) (FIXED, or rather realised it's not a bug in my program)
     While a key is pressed, the mouse cannot be moved,
     when using the track pad
 
@@ -21,7 +21,7 @@
     but stop at the edge. So technically they will move with a speed
     less than their speed.
 
-- BUG4 (sprite collision)
+- BUG4 (sprite collision) (FIXED)
     Sprite collision is not very well implemented in SFML.
     It relies on a bounding rectangle parallel to the X and Y axes,
     which is not good enough.

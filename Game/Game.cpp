@@ -75,54 +75,55 @@ void Game::Draw()
 
 void Game::ConfigWindow()
 {
-    if (_config.find("fullscreen") != _config.end())
+    auto const fullscreenConfig = _config.find("fullscreen");
+    if (fullscreenConfig != _config.end()
+        && fullscreenConfig->second == "on")
     {
-        if (_config["fullscreen"] == "on")
-        {
-            // if it is specified that fullscreen is on, create fullscreen window
-            _window.create(
-                sf::VideoMode(
-                    sf::VideoMode::getDesktopMode().width,
-                    sf::VideoMode::getDesktopMode().height
-                ),
-                "",
-                sf::Style::Fullscreen
-            );
-
-            return;
-        }
+        // if it is specified that fullscreen is on, create fullscreen window
+        _window.create(
+            sf::VideoMode(
+                sf::VideoMode::getDesktopMode().width,
+                sf::VideoMode::getDesktopMode().height
+            ),
+            "",
+            sf::Style::Fullscreen
+        );
     }
-
-    int width = WINDOW_WIDTH_DEFAULT;
-    int height = WINDOW_HEIGHT_DEFAULT;
-    if (_config.find("resolution") != _config.end())
+    else
     {
-        std::string resolution = _config["resolution"];
-
-        // The 'x' acting as the separator between width and height in a resolution (eg. 640x460)
-        size_t xIndex = resolution.find('x');
-        if (xIndex == std::string::npos)
+        int width = WINDOW_WIDTH_DEFAULT;
+        int height = WINDOW_HEIGHT_DEFAULT;
+        auto const resolutionConfig = _config.find("resolution");
+        if (resolutionConfig != _config.end())
         {
-            throw std::runtime_error("Resolution specified in the game config file is not in the correct format.");
-        }
-        
-        // Separate width and height from the resolution
-        width = std::stoi(resolution.substr(0, xIndex));
-        height = std::stoi(resolution.substr(xIndex + 1));
-    }
+            std::string const resolution = resolutionConfig->second;
 
-    // Create window with the resolution
-    _window.create(
-        sf::VideoMode(width, height),
-        "Hide and Seek and Shoot",
-        sf::Style::Default
-    );
+            // The 'x' acting as the separator between width and height in a resolution (eg. 640x460)
+            size_t xIndex = resolution.find('x');
+            if (xIndex == std::string::npos)
+            {
+                throw std::runtime_error("Resolution specified in the game config file is not in the correct format.");
+            }
+            
+            // Separate width and height from the resolution
+            width = std::stoi(resolution.substr(0, xIndex));
+            height = std::stoi(resolution.substr(xIndex + 1));
+        }
+
+        // Create window with the resolution
+        _window.create(
+            sf::VideoMode(width, height),
+            "Hide and Seek and Shoot",
+            sf::Style::Default
+        );
+    }
 
     // Get framerate limit from the config, if specified, otherwise use default
     int frameRateLimit = FRAMERATE_LIMIT_DEFAULT;
-    if (_config.find("framerate_limit") != _config.end())
+    auto const framerateLimitConfig = _config.find("framerate_limit");
+    if (framerateLimitConfig != _config.end())
     {
-        frameRateLimit = std::stoi(_config["framerate_limit"]);
+        frameRateLimit = std::stoi(framerateLimitConfig->second);
     }
     _window.setFramerateLimit(frameRateLimit);
 

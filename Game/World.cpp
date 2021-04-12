@@ -45,6 +45,7 @@ void World::SetBackgroundTexture(sf::Texture const* bgTex)
     }
 
     _bgSprite.setTexture(*bgTex);
+    // scale background sprite so that it spans the whole world
     _bgSprite.scale(
         _size.x / _bgSprite.getGlobalBounds().width,
         _size.y / _bgSprite.getGlobalBounds().height
@@ -53,18 +54,17 @@ void World::SetBackgroundTexture(sf::Texture const* bgTex)
 
 void World::SetWallTexture(sf::Texture const* wallTex)
 {
-    _wallTex = wallTex;
     if (wallTex == nullptr)
     {
         return;
     }
+    _wallTex = wallTex;
 
     for (int wallInd = 0; wallInd < _walls.size(); wallInd++)
     {
         TextureUtils::SetTextureKeepRatio(
             &_walls[wallInd],
-            wallTex,
-            sf::Vector2i(0, 0)
+            wallTex
         );
     }
 }
@@ -111,14 +111,17 @@ Person& World::GetPlayer()
 
 void World::Update(ControlState const& controlState)
 {
+    sf::Vector2f playerDirection;
     if (controlState.IsUpPressed())
-        _player.MoveInDirection(0.f, -1.f);
+        playerDirection.y -= 1.f;
     if (controlState.IsDownPressed())
-        _player.MoveInDirection(0.f, 1.f);
+        playerDirection.y += 1.f;
     if (controlState.IsLeftPressed())
-        _player.MoveInDirection(-1.f, 0.f);
+        playerDirection.x -= 1.f;
     if (controlState.IsRightPressed()) 
-        _player.MoveInDirection(1.f, 0.f);
+        playerDirection.x += 1.f;
+
+    _player.MoveInDirection(playerDirection);
 
     _player.SetTargetPoint(controlState.GetMousePosition());
     
