@@ -16,25 +16,29 @@ auto constexpr WALLS_CONFIG_FILENAME = "Game/config/walls.conf";
 namespace HideAndSeekAndShoot
 {
 
-World::World()
-    : _wallTex(nullptr),
-    _player(this)
+World::World(
+    Game const* game)
+    : _game(game),
+    _wallTex(nullptr)
 {
     LoadRelWalls();
 }
 
 World::World(
+    Game const* game,
     sf::Vector2f size,
     sf::Texture const* bgTex,
     sf::Texture const* wallTex)
-    : _wallTex(wallTex),
-    _player(this)
+    : _game(game),
+    _wallTex(wallTex)
 {
     SetSize(size);
     SetBackgroundTexture(bgTex);
 
     LoadRelWalls();
     GenerateWalls();
+
+    _player = std::make_unique<Person>(this);
 }
 
 void World::SetBackgroundTexture(sf::Texture const* bgTex)
@@ -81,6 +85,9 @@ void World::SetSize(sf::Vector2f const& size)
         throw std::runtime_error("Error: Cannot set world's size to be negative.");
     }
     _size = size;
+
+    // A new player should be created, because his speed depends on the size of the world
+    _player = std::make_unique<Person>(this);
 }
 
 void World::GenerateWalls()
@@ -104,9 +111,14 @@ void World::GenerateWalls()
     SetWallTexture(_wallTex);
 }
 
+Game const* World::GetGame() const
+{
+    return _game;
+}
+
 Person& World::GetPlayer()
 {
-    return _player;
+    return *_player;
 }
 
 void World::Update(ControlState const& controlState)
@@ -121,11 +133,11 @@ void World::Update(ControlState const& controlState)
     if (controlState.IsRightPressed()) 
         playerDirection.x += 1.f;
 
-    _player.MoveInDirection(playerDirection);
+    _player->MoveInDirection(playerDirection);
 
-    _player.SetTargetPoint(controlState.GetMousePosition());
+    _player->SetTargetPoint(controlState.GetMousePosition());
     
-    _player.Update();
+    _player->Update();
 }
 
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -137,7 +149,7 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
         target.draw(_walls[wallInd], states);
     }
 
-    target.draw(_player);
+    target.draw(*_player);
 }
 
 void World::LoadRelWalls()

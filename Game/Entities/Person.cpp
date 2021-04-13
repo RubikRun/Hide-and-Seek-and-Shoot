@@ -3,6 +3,7 @@
 #include "Person.h"
 
 #include "../World.h"
+#include "../Game.h"
 
 #include "../utils/configUtils.hpp"
 #include "../utils/geometryUtils.hpp"
@@ -13,8 +14,7 @@ namespace
 {
     auto constexpr PERSON_CONFIG_FILENAME = "Game/config/person.conf";
 
-    // TODO: this will later be a variable or in a config file, so that it can be different for different derived classes
-    float const PERSON_SPEED = 15.f;
+    float const PERSON_SPEED_DEFAULT = 10.f;
 
     // TODO: probably move to a config file
     float const PERSON_MOVEMENT_STEP = 1.f;
@@ -31,6 +31,8 @@ Person::Person(World const* world)
     _config(ConfigUtils::ReadConfig(PERSON_CONFIG_FILENAME))
 {
     sf::Transformable::setPosition(PERSON_INTIAL_POSITION);
+
+    ConfigPersonSpeed();
 }
 
 void Person::SetHeadTexture(sf::Texture const* headTex)
@@ -91,7 +93,7 @@ void Person::SetTargetPoint(sf::Vector2f const& targetPoint)
 void Person::MoveInDirection(sf::Vector2f const dirVector)
 {
     // Calculate velocity vector in the given direction with the person's constant speed
-    sf::Vector2f velocity = GeometryUtils::NormaliseVector(dirVector) * PERSON_SPEED;
+    sf::Vector2f velocity = GeometryUtils::NormaliseVector(dirVector) * _speed;
     sf::Vector2f nextPosition = sf::Transformable::getPosition() + velocity;
 
     // If the next position is valid, move the person there
@@ -140,6 +142,22 @@ void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     target.draw(circle);
 #endif
+}
+
+void Person::ConfigPersonSpeed()
+{
+    auto personSpeedConfig = _config.find("speed");
+    if (personSpeedConfig != _config.end())
+    {
+        // Person speed relative to the window's width, in pixels/second
+        float personSpeedRel = std::stof(personSpeedConfig->second);
+
+        _speed = personSpeedRel * _world->GetSize().x / (float)_world->GetGame()->GetFramerateLimit();
+    }
+    else
+    {
+        _speed = PERSON_SPEED_DEFAULT;
+    }
 }
 
 void Person::UpdateTransform()

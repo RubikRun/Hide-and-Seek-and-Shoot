@@ -86,6 +86,11 @@ class Person : public sf::Drawable, public sf::Transformable
      */
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
+    /**
+     * Configures the person speed, as specified in the config
+     */
+    void ConfigPersonSpeed();
+
     /// Updates the person according to the data derived from sf::Transformable
     void UpdateTransform();
 
@@ -138,13 +143,16 @@ class Person : public sf::Drawable, public sf::Transformable
     /// Target point, towards which the Person is always looking and can shoot
     sf::Vector2f _targetPoint;
 
-    /// Person configuration
-    Config _config;
+    /// Speed of the person's movement, in pixels/frame
+    float _speed;
 
     /* Person collisions with other objects are detected if the other object is
         within this radius to the player's center.
         Essentially a person is a circle for the collision detection. */
     float _collisionRadius;
+
+    /// Person configuration
+    Config _config;
 };
 
 } // namespace HideAndSeekAndShoot

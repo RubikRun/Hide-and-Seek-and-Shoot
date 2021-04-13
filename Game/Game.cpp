@@ -27,6 +27,8 @@ Game::Game()
 {
     ConfigWindow();
     LoadResources();
+
+    _world = std::make_unique<World>(this);
     SetupWorld();
 }
 
@@ -59,18 +61,23 @@ void Game::Run()
     }
 }
 
+int Game::GetFramerateLimit() const
+{
+    return _framerateLimit;
+}
+
 Game::~Game()
 { /* nothing */ }
 
 void Game::Update()
 {
     _controlState.Update();
-    _world.Update(_controlState);
+    _world->Update(_controlState);
 }
 
 void Game::Draw()
 {
-    _window.draw(_world);
+    _window.draw(*_world);
 }
 
 void Game::ConfigWindow()
@@ -119,13 +126,14 @@ void Game::ConfigWindow()
     }
 
     // Get framerate limit from the config, if specified, otherwise use default
-    int frameRateLimit = FRAMERATE_LIMIT_DEFAULT;
+    int framerateLimit = FRAMERATE_LIMIT_DEFAULT;
     auto const framerateLimitConfig = _config.find("framerate_limit");
     if (framerateLimitConfig != _config.end())
     {
-        frameRateLimit = std::stoi(framerateLimitConfig->second);
+        framerateLimit = std::stoi(framerateLimitConfig->second);
     }
-    _window.setFramerateLimit(frameRateLimit);
+    _window.setFramerateLimit(framerateLimit);
+    _framerateLimit = framerateLimit;
 
     // Enable vertical sync for screens that get screen tearing
     _window.setVerticalSyncEnabled(true);
@@ -140,13 +148,13 @@ void Game::LoadResources()
 
 void Game::SetupWorld()
 {
-    _world.SetSize((sf::Vector2f)_window.getSize());
-    _world.SetBackgroundTexture(&_textureHandler.Get(Resources::Texture::Id::Background));
-    _world.SetWallTexture(&_textureHandler.Get(Resources::Texture::Id::Wall));
-    _world.GenerateWalls();
+    _world->SetSize((sf::Vector2f)_window.getSize());
+    _world->SetBackgroundTexture(&_textureHandler.Get(Resources::Texture::Id::Background));
+    _world->SetWallTexture(&_textureHandler.Get(Resources::Texture::Id::Wall));
+    _world->GenerateWalls();
 
     // (testing Player class, TODO: remove later)
-    _world.GetPlayer().SetHeadTexture(&_textureHandler.Get(Resources::Texture::Id::PlayerHead));
+    _world->GetPlayer().SetHeadTexture(&_textureHandler.Get(Resources::Texture::Id::PlayerHead));
 }
 
 } // namespace HideAndSeekAndShoot

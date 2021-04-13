@@ -13,6 +13,7 @@ namespace HideAndSeekAndShoot
 {
 
 class ControlState;
+class Game;
 
 /**
  * A class representing the world in the game.
@@ -25,12 +26,17 @@ class World : public sf::Drawable
 
     /**
      * Creates a world of size 0.
+     * 
+     * @param[in] game
+     *  Pointer to the game that creates the world
      */
-    World();
+    World(Game const* game);
 
     /**
      * Creates a world with size and textures
      * 
+     * @param[in] game
+     *  Pointer to the game that creates the world
      * @param[in] size
      *  Size of the world, width and height, in pixels
      * @param[in] bgTex
@@ -39,6 +45,7 @@ class World : public sf::Drawable
      *  Pointer to loaded texture to be used for walls
      */
     World(
+        Game const* game,
         sf::Vector2f size,
         sf::Texture const* bgTex = nullptr,
         sf::Texture const* wallTex = nullptr
@@ -57,7 +64,10 @@ class World : public sf::Drawable
     /// Generate walls according to the current world size
     void GenerateWalls();
 
-    /// Player getter (testing Person class, TODO: remove later)
+    /// Returns a pointer to the game owner/creater of the world
+    Game const* GetGame() const;
+
+    /// Player getter (testing Person class, TODO: remove later)(probably shouldn't return reference to an object owned by unique_ptr)
     Person& GetPlayer();
 
     /**
@@ -83,6 +93,9 @@ class World : public sf::Drawable
 
   private: /* variables */
     
+    /// Game object that is an owner/creater of this world
+    Game const* _game;
+
     /// Size of the world, in pixels
     sf::Vector2f _size;
 
@@ -99,7 +112,7 @@ class World : public sf::Drawable
     sf::Texture const* _wallTex;
 
     /// Player object (testing Person class, TODO: remove later)
-    Person _player;
+    std::unique_ptr<Person> _player;
 
     /// Declare Person class to be a friend class so that it can access world's walls
     /// (TODO: think about it, probably not the greatest idea)

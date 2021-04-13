@@ -34,6 +34,9 @@ class Game
      */
     void Run();
 
+    /// Returns game's framerate limit
+    int GetFramerateLimit() const;
+
     /**
      * Cleans up after the game has ended.
      */
@@ -66,10 +69,13 @@ class Game
     sf::RenderWindow _window;
 
     /// World of the game
-    World _world;
+    std::unique_ptr<World> _world;
 
     /// Current control state
     ControlState _controlState;
+
+    /// Framerate limit of the game
+    int _framerateLimit;
 
     /// Game configuration
     Config _config;
