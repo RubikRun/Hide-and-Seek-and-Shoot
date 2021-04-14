@@ -32,3 +32,21 @@
     Not to say it's not possible, I just don't want to deal with it in this game.
     It is a side project for another time - generic sprite wrapper,
     that can be used to define the sprite bounds to be any complex shape.
+
+- BUG5 (movement direction change when collision)
+    When the person tries to move to some direction,
+    but there is an object there and a collision is detected,
+    the person just stops.
+    In some cases it's more sensible to change the direction slightly
+    so that it can move along the object.
+    Example: If the player is holding W and D keys, the player is moving
+    with direction vector (1, -1) diagonally to the right and up.
+    With that direction, when the person encounters the right wall,
+    it would be sensible that he would move (0, -1) only upward.
+    But instead he just stops.
+    Not sure how to handle this in all cases.
+    Something like that: After figuring out the the direction vector
+    gives an invalid position, it should be checked if there is another
+    direction vector within a small enough angle to the first one
+    (probably less than 90 degrees is fine).
+    But how would that be detected? I currently have no idea.
