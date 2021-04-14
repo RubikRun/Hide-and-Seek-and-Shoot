@@ -86,10 +86,11 @@ class Person : public sf::Drawable, public sf::Transformable
      */
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-    /**
-     * Configures the person speed, as specified in the config
-     */
+    /// Configures the person speed, as specified in the config
     void ConfigPersonSpeed();
+
+    /// Configures the movement precision, as specified in the config
+    void ConfigMovementPrecision();
 
     /// Updates the person according to the data derived from sf::Transformable
     void UpdateTransform();
@@ -150,6 +151,24 @@ class Person : public sf::Drawable, public sf::Transformable
         within this radius to the player's center.
         Essentially a person is a circle for the collision detection. */
     float _collisionRadius;
+
+    /* A person moves with its speed every frame.
+    But frames are finite, so technically the person does not move,
+    but jump from place to place very rapidly.
+    This is not a problem when the person moves normally,
+    but can be a problem when the person tries to move, say speed=10, pixels in one frame,
+    but 7 pixels in that direction there is an object, and a collision is detected.
+    In that situation we don't want the person to stop 7 pixels away from the object,
+    we want to move it towards the object with some finer precision than the speed,
+    and that is exactly what this variable is.
+    When a collision is detected, the person is moved with that movement precision
+    until he collides with the object.
+    Let's say the movement precision is 2 and there is an object at 7 pixels away.
+    The person will move 2 pixels, then 2 pixels more, 2 more and it will be 1 pixel away,
+    then it will stop because moving 2 pixels again would collide with the object.
+    So the person did not reach the object fully, because the movement precision is not small enough.
+    Recommended value for that variable is 1 or less. */
+    float _movementPrecision;
 
     /// Person configuration
     Config _config;

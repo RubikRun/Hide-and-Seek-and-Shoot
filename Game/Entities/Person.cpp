@@ -1,4 +1,4 @@
-#define VISUAL_DEBUG 0
+#define VISUAL_DEBUG 1
 
 #include "Person.h"
 
@@ -16,8 +16,7 @@ namespace
 
     float const PERSON_SPEED_DEFAULT = 10.f;
 
-    // TODO: probably move to a config file
-    float const PERSON_MOVEMENT_STEP = 1.f;
+    float const MOVEMENT_PRECISION_DEFAULT = 1.f;
 
     // TODO: in config, also make it use relative coords
     sf::Vector2f const PERSON_INTIAL_POSITION(400.f, 400.f);
@@ -33,6 +32,7 @@ Person::Person(World const* world)
     sf::Transformable::setPosition(PERSON_INTIAL_POSITION);
 
     ConfigPersonSpeed();
+    ConfigMovementPrecision();
 }
 
 void Person::SetHeadTexture(sf::Texture const* headTex)
@@ -43,6 +43,12 @@ void Person::SetHeadTexture(sf::Texture const* headTex)
     }
 
     _headSprite.setTexture(*headTex);
+
+    // Sets head's origin to be its center, instead of the upper-left corner
+    _headSprite.setOrigin(
+        _headSprite.getLocalBounds().width / 2,
+        _headSprite.getLocalBounds().height / 2
+    );
 
     // Scale texture to fit the head size from the config, if specified
     auto const headSizeXConfig = _config.find("head_size_x");
@@ -65,24 +71,21 @@ void Person::SetHeadTexture(sf::Texture const* headTex)
             headSizeX / _headSprite.getLocalBounds().width,
             headSizeY / _headSprite.getLocalBounds().height
         );
-
-        // Set collision radius to be the radius from the center of the texture to its corner
-        _collisionRadius = sqrt(
-            headSizeX * headSizeX / 4 +
-            headSizeY * headSizeY / 4);
-        // If scale for the collision radius is specified in the config, the radius should be scaled with it
-        auto collisionRadiusScaleConfig = _config.find("collision_radius_scale");
-        if (collisionRadiusScaleConfig != _config.end())
-        {
-            _collisionRadius *= std::stof(collisionRadiusScaleConfig->second);
-        }
     }
 
-    // Sets head's origin to be its center, instead of the upper-left corner
-    _headSprite.setOrigin(
-        (float)_headSprite.getLocalBounds().width / 2,
-        (float)_headSprite.getLocalBounds().height / 2
-    );
+    float headSizeX = _headSprite.getGlobalBounds().width;
+    float headSizeY = _headSprite.getGlobalBounds().height;
+
+    // Set collision radius to be the radius from the center of the texture to its corner
+    _collisionRadius = sqrt(
+        headSizeX * headSizeX / 4 +
+        headSizeY * headSizeY / 4);
+    // If scale for the collision radius is specified in the config, the radius should be scaled with it
+    auto collisionRadiusScaleConfig = _config.find("collision_radius_scale");
+    if (collisionRadiusScaleConfig != _config.end())
+    {
+        _collisionRadius *= std::stof(collisionRadiusScaleConfig->second);
+    }
 }
 
 void Person::SetTargetPoint(sf::Vector2f const& targetPoint)
@@ -107,7 +110,7 @@ void Person::MoveInDirection(sf::Vector2f const dirVector)
     else
     {
         nextPosition = sf::Transformable::getPosition();
-        sf::Vector2f stepVector = GeometryUtils::NormaliseVector(dirVector) * PERSON_MOVEMENT_STEP;
+        sf::Vector2f stepVector = GeometryUtils::NormaliseVector(dirVector) * _movementPrecision;
         while (IsPositionValid(nextPosition + stepVector))
         {
             nextPosition += stepVector;
@@ -157,6 +160,19 @@ void Person::ConfigPersonSpeed()
     else
     {
         _speed = PERSON_SPEED_DEFAULT;
+    }
+}
+
+void Person::ConfigMovementPrecision()
+{
+    auto movementPrecisionConfig = _config.find("movement_precision");
+    if (movementPrecisionConfig != _config.end())
+    {
+        _movementPrecision = std::stof(movementPrecisionConfig->second);
+    }
+    else
+    {
+        _movementPrecision = MOVEMENT_PRECISION_DEFAULT;
     }
 }
 
