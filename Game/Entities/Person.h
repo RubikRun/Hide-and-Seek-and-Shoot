@@ -92,6 +92,9 @@ class Person : public sf::Drawable, public sf::Transformable
     /// Configures the movement precision, as specified in the config
     void ConfigMovementPrecision();
 
+    /// Configures person's initial position - reads it from the config and sets it to the person
+    void ConfigInitialPosition();
+
     /// Updates the person according to the data derived from sf::Transformable
     void UpdateTransform();
 

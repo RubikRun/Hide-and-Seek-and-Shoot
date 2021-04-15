@@ -14,12 +14,11 @@ namespace
 {
     auto constexpr PERSON_CONFIG_FILENAME = "Game/config/person.conf";
 
-    float const PERSON_SPEED_DEFAULT = 10.f;
+    float const SPEED_DEFAULT = 10.f;
 
     float const MOVEMENT_PRECISION_DEFAULT = 1.f;
 
-    // TODO: in config, also make it use relative coords
-    sf::Vector2f const PERSON_INTIAL_POSITION(400.f, 400.f);
+    sf::Vector2f const INTIAL_POSITION_DEFAULT(0.2f, 0.7f);
 }
 
 namespace HideAndSeekAndShoot
@@ -29,8 +28,7 @@ Person::Person(World const* world)
     : _world(world),
     _config(ConfigUtils::ReadConfig(PERSON_CONFIG_FILENAME))
 {
-    sf::Transformable::setPosition(PERSON_INTIAL_POSITION);
-
+    ConfigInitialPosition();
     ConfigPersonSpeed();
     ConfigMovementPrecision();
 }
@@ -159,7 +157,7 @@ void Person::ConfigPersonSpeed()
     }
     else
     {
-        _speed = PERSON_SPEED_DEFAULT;
+        _speed = SPEED_DEFAULT;
     }
 }
 
@@ -174,6 +172,26 @@ void Person::ConfigMovementPrecision()
     {
         _movementPrecision = MOVEMENT_PRECISION_DEFAULT;
     }
+}
+
+void Person::ConfigInitialPosition()
+{
+    sf::Vector2f relInitialPosition = INTIAL_POSITION_DEFAULT;
+
+    auto initialPositionXConfig = _config.find("initial_position_x");
+    auto initialPositionYConfig = _config.find("initial_position_y");
+    if (initialPositionXConfig != _config.end() && initialPositionYConfig != _config.end())
+    {
+        relInitialPosition = {
+            std::stof(initialPositionXConfig->second),
+            std::stof(initialPositionYConfig->second)
+        };
+    }
+    
+    sf::Transformable::setPosition(
+        relInitialPosition.x * _world->GetSize().x,
+        relInitialPosition.y * _world->GetSize().y
+    );
 }
 
 void Person::UpdateTransform()
