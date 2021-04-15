@@ -28,8 +28,11 @@ Game::Game()
     ConfigWindow();
     LoadResources();
 
-    _world = std::make_unique<World>(this);
-    SetupWorld();
+    _world = std::make_unique<World>(
+        this,
+        &_textureHandler,
+        (sf::Vector2f)_window.getSize()
+    );
 }
 
 void Game::Run()
@@ -144,17 +147,6 @@ void Game::LoadResources()
     _textureHandler.Load(Resources::Texture::Id::Background, BACKGROUND_TEXTURE_FILENAME);
     _textureHandler.Load(Resources::Texture::Id::Wall, WALL_TEXTURE_FILENAME);
     _textureHandler.Load(Resources::Texture::Id::PlayerHead, PLAYER_HEAD_TEXTURE_FILENAME);
-}
-
-void Game::SetupWorld()
-{
-    _world->SetSize((sf::Vector2f)_window.getSize());
-    _world->SetBackgroundTexture(&_textureHandler.Get(Resources::Texture::Id::Background));
-    _world->SetWallTexture(&_textureHandler.Get(Resources::Texture::Id::Wall));
-    _world->GenerateWalls();
-
-    // (testing Player class, TODO: remove later)
-    _world->GetPlayer().SetHeadTexture(&_textureHandler.Get(Resources::Texture::Id::PlayerHead));
 }
 
 } // namespace HideAndSeekAndShoot

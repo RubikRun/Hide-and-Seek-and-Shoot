@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Entities/Person.h"
+#include "Entities/Player.h"
+
+#include "resources/ResourceHandler.hpp"
+#include "resources/ResourceIDs.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -29,37 +32,17 @@ class World : public sf::Drawable
      * 
      * @param[in] game
      *  Pointer to the game that creates the world
-     */
-    World(Game const* game);
-
-    /**
-     * Creates a world with size and textures
-     * 
-     * @param[in] game
-     *  Pointer to the game that creates the world
-     * @param[in] size
-     *  Size of the world, width and height, in pixels
-     * @param[in] bgTex
-     *  Pointer to loaded texture to be used for the background of the world
-     * @param[in] wallTex
-     *  Pointer to loaded texture to be used for walls
+     * @param[in] texHandler
+     *  Pointer to textre handler with loaded textures
      */
     World(
-        Game const* game,
-        sf::Vector2f size,
-        sf::Texture const* bgTex = nullptr,
-        sf::Texture const* wallTex = nullptr
+      Game const* game,
+      Resources::ResourceHandler<Resources::Texture::Id, sf::Texture> const* texHandler,
+      sf::Vector2f size
     );
 
-    /// Setter for the background of the world
-    void SetBackgroundTexture(sf::Texture const* bgTex);
-
-    /// Setter for the texture used for walls
-    void SetWallTexture(sf::Texture const* wallTex);
-
-    /// Getter and setter for world's size
+    /// Getter for world's size
     sf::Vector2f GetSize() const;
-    void SetSize(sf::Vector2f const& size);
 
     /// Generate walls according to the current world size
     void GenerateWalls();
@@ -67,8 +50,8 @@ class World : public sf::Drawable
     /// Returns a pointer to the game owner/creater of the world
     Game const* GetGame() const;
 
-    /// Player getter (testing Person class, TODO: remove later)(probably shouldn't return reference to an object owned by unique_ptr)
-    Person& GetPlayer();
+    /// Returns a vector of world's walls
+    std::vector<sf::ConvexShape> const& GetWalls() const;
 
     /**
      * Updates world according to a control state
@@ -91,6 +74,12 @@ class World : public sf::Drawable
     /// Loads walls' relative coordinates from config file
     void LoadRelWalls();
 
+    /// Setter for the background of the world
+    void SetBackgroundTexture(sf::Texture const* bgTex);
+
+    /// Setter for the texture used for walls
+    void SetWallTexture(sf::Texture const* wallTex);
+
   private: /* variables */
     
     /// Game object that is an owner/creater of this world
@@ -111,12 +100,8 @@ class World : public sf::Drawable
     /// Pointer to a loaded texture to be used for walls
     sf::Texture const* _wallTex;
 
-    /// Player object (testing Person class, TODO: remove later)
-    std::unique_ptr<Person> _player;
-
-    /// Declare Person class to be a friend class so that it can access world's walls
-    /// (TODO: think about it, probably not the greatest idea)
-    friend class Person;
+    /// Player object for the player's entity
+    std::unique_ptr<Player> _player;
 };
 
 } // namespace HideAndSeekAndShoot

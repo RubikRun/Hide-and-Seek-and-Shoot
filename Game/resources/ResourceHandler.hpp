@@ -5,6 +5,9 @@
 #include <map>
 #include <stdexcept>
 
+namespace HideAndSeekAndShoot
+{
+
 namespace Resources
 {
 
@@ -97,3 +100,5 @@ RT const& ResourceHandler<RIDT, RT>::Get(RIDT id) const
 }
 
 } // namespace Resources
+
+} // namespace HideAndSeekAndShoot

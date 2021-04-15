@@ -17,77 +17,27 @@ namespace HideAndSeekAndShoot
 {
 
 World::World(
-    Game const* game)
-    : _game(game),
-    _wallTex(nullptr)
-{
-    LoadRelWalls();
-}
-
-World::World(
     Game const* game,
-    sf::Vector2f size,
-    sf::Texture const* bgTex,
-    sf::Texture const* wallTex)
+    Resources::ResourceHandler<Resources::Texture::Id, sf::Texture> const* texHandler,
+    sf::Vector2f size)
     : _game(game),
-    _wallTex(wallTex)
+    _size(size)
 {
-    SetSize(size);
-    SetBackgroundTexture(bgTex);
+    SetBackgroundTexture(&texHandler->Get(Resources::Texture::Id::Background));
 
     LoadRelWalls();
     GenerateWalls();
+    SetWallTexture(&texHandler->Get(Resources::Texture::Id::Wall));
 
-    _player = std::make_unique<Person>(this);
-}
-
-void World::SetBackgroundTexture(sf::Texture const* bgTex)
-{
-    if (bgTex == nullptr)
-    {
-        return;
-    }
-
-    _bgSprite.setTexture(*bgTex);
-    // scale background sprite so that it spans the whole world
-    _bgSprite.scale(
-        _size.x / _bgSprite.getGlobalBounds().width,
-        _size.y / _bgSprite.getGlobalBounds().height
+    _player = std::make_unique<Player>(
+        this,
+        &texHandler->Get(Resources::Texture::Id::PlayerHead)
     );
-}
-
-void World::SetWallTexture(sf::Texture const* wallTex)
-{
-    if (wallTex == nullptr)
-    {
-        return;
-    }
-    _wallTex = wallTex;
-
-    for (int wallInd = 0; wallInd < _walls.size(); wallInd++)
-    {
-        TextureUtils::SetTextureKeepRatio(
-            &_walls[wallInd],
-            wallTex
-        );
-    }
 }
 
 sf::Vector2f World::GetSize() const
 {
     return _size;
-}
-
-void World::SetSize(sf::Vector2f const& size)
-{
-    if (size.x < 0 || size.y < 0)
-    {
-        throw std::runtime_error("Error: Cannot set world's size to be negative.");
-    }
-    _size = size;
-
-    // A new player should be created, because his speed depends on the size of the world
-    _player = std::make_unique<Person>(this);
 }
 
 void World::GenerateWalls()
@@ -116,9 +66,9 @@ Game const* World::GetGame() const
     return _game;
 }
 
-Person& World::GetPlayer()
+std::vector<sf::ConvexShape> const& World::GetWalls() const
 {
-    return *_player;
+    return _walls;
 }
 
 void World::Update(ControlState const& controlState)
@@ -178,6 +128,38 @@ void World::LoadRelWalls()
         {
             _relWalls[wallInd][verInd] = getVertex(wallInd, verInd);
         }
+    }
+}
+
+void World::SetBackgroundTexture(sf::Texture const* bgTex)
+{
+    if (bgTex == nullptr)
+    {
+        return;
+    }
+
+    _bgSprite.setTexture(*bgTex);
+    // scale background sprite so that it spans the whole world
+    _bgSprite.scale(
+        _size.x / _bgSprite.getGlobalBounds().width,
+        _size.y / _bgSprite.getGlobalBounds().height
+    );
+}
+
+void World::SetWallTexture(sf::Texture const* wallTex)
+{
+    if (wallTex == nullptr)
+    {
+        return;
+    }
+    _wallTex = wallTex;
+
+    for (int wallInd = 0; wallInd < _walls.size(); wallInd++)
+    {
+        TextureUtils::SetTextureKeepRatio(
+            &_walls[wallInd],
+            wallTex
+        );
     }
 }
 

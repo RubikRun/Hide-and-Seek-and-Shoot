@@ -24,13 +24,23 @@ namespace
 namespace HideAndSeekAndShoot
 {
 
-Person::Person(World const* world)
+Person::Person(
+    World const* world,
+    sf::Texture const* headTex)
     : _world(world),
     _config(ConfigUtils::ReadConfig(PERSON_CONFIG_FILENAME))
 {
+    SetHeadTexture(headTex);
+
     ConfigInitialPosition();
     ConfigPersonSpeed();
     ConfigMovementPrecision();
+}
+
+void Person::Update()
+{
+    UpdateTransform();
+    PointHeadTowardsTargetPoint();
 }
 
 void Person::SetHeadTexture(sf::Texture const* headTex)
@@ -122,12 +132,6 @@ void Person::MoveInDirection(float xDir, float yDir)
     MoveInDirection(sf::Vector2f(xDir, yDir));
 }
 
-void Person::Update()
-{
-    UpdateTransform();
-    PointHeadTowardsTargetPoint();
-}
-
 void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_headSprite);
@@ -187,7 +191,7 @@ void Person::ConfigInitialPosition()
             std::stof(initialPositionYConfig->second)
         };
     }
-    
+
     sf::Transformable::setPosition(
         relInitialPosition.x * _world->GetSize().x,
         relInitialPosition.y * _world->GetSize().y
@@ -224,7 +228,7 @@ bool Person::IsPositionInWorld(sf::Vector2f const& position) const
 
 bool Person::IsPositionOutsideWalls(sf::Vector2f const& position) const
 {
-    for (sf::ConvexShape const& wall : _world->_walls)
+    for (sf::ConvexShape const& wall : _world->GetWalls())
     {
         /* Checking if any edge of the wall intersects the collision circle.
             Which is not 100% correct, because if the collision cirlce

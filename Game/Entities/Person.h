@@ -33,8 +33,18 @@ class Person : public sf::Drawable, public sf::Transformable
      * 
      * @param[in] world
      *  Pointer to the world from which we are creating the person
+     * @param[in] headTex
+     *  Pointer to the texture to be used for person's head
      */
-    Person(World const* world);
+    Person(
+      World const* world,
+      sf::Texture const* headTex
+    );
+
+    /// Updates the person for next frame
+    virtual void Update();
+
+  protected:
 
     /**
      * Sets a texture for the person's head
@@ -59,10 +69,6 @@ class Person : public sf::Drawable, public sf::Transformable
      * People have constant speed and so only a direction
      * can be specified for their movement.
      * 
-     * TODO: these methods will probably be made private later,
-     *  because the Player should be movable from the outside,
-     *  but the Enemy should not.
-     * 
      * @param[in] dirVector (or xDir, yDir)
      *  Vector specifying the direction of the movement.
      *  Not to be confused with velocity vector.
@@ -71,8 +77,8 @@ class Person : public sf::Drawable, public sf::Transformable
     void MoveInDirection(sf::Vector2f const dirVector);
     void MoveInDirection(float xDir, float yDir);
 
-    ///Updates the person for next frame
-    void Update();
+    /// Rotates the head sprite so that it points towards the target point
+    void PointHeadTowardsTargetPoint();
 
   private: /* functions */
 
@@ -97,9 +103,6 @@ class Person : public sf::Drawable, public sf::Transformable
 
     /// Updates the person according to the data derived from sf::Transformable
     void UpdateTransform();
-
-    /// Rotates the head sprite so that it points towards the target point
-    void PointHeadTowardsTargetPoint();
 
     /**
      * Checks if a position is within the borders of the world
