@@ -6,6 +6,8 @@
 
 #include <stdexcept>
 
+#include <iostream>
+
 namespace
 {
 
@@ -25,13 +27,19 @@ World::World(
 {
     SetBackgroundTexture(&texHandler->Get(Resources::Texture::Id::Background));
 
+    SetWallTexture(&texHandler->Get(Resources::Texture::Id::Wall));
     LoadRelWalls();
     GenerateWalls();
-    SetWallTexture(&texHandler->Get(Resources::Texture::Id::Wall));
 
     _player = std::make_unique<Player>(
         this,
         &texHandler->Get(Resources::Texture::Id::PlayerHead)
+    );
+
+    _enemy = std::make_unique<Enemy>(
+        this,
+        &texHandler->Get(Resources::Texture::Id::PlayerHead), // TODO: add a new texture EnemyHead
+        &*_player
     );
 }
 
@@ -82,12 +90,11 @@ void World::Update(ControlState const& controlState)
         playerDirection.x -= 1.f;
     if (controlState.IsRightPressed()) 
         playerDirection.x += 1.f;
-
     _player->MoveInDirection(playerDirection);
-
     _player->SetTargetPoint(controlState.GetMousePosition());
-    
     _player->Update();
+
+    _enemy->Update();
 }
 
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -99,6 +106,7 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
         target.draw(_walls[wallInd], states);
     }
 
+    target.draw(*_enemy);
     target.draw(*_player);
 }
 
@@ -148,11 +156,11 @@ void World::SetBackgroundTexture(sf::Texture const* bgTex)
 
 void World::SetWallTexture(sf::Texture const* wallTex)
 {
+    _wallTex = wallTex;
     if (wallTex == nullptr)
     {
         return;
     }
-    _wallTex = wallTex;
 
     for (int wallInd = 0; wallInd < _walls.size(); wallInd++)
     {

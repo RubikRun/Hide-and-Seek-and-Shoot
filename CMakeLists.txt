@@ -7,8 +7,9 @@ add_executable(game
     main.cpp
     Game/Game.cpp
     Game/World.cpp
+    Game/ControlState.cpp
     Game/Entities/Person.cpp
-    Game/ControlState.cpp)
+    Game/Entities/Enemy.cpp)
 
 # Configure SFML
 target_include_directories(game

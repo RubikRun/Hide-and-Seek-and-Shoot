@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Person.h"
 
 namespace HideAndSeekAndShoot

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entities/Player.h"
+#include "Entities/Enemy.h"
 
 #include "resources/ResourceHandler.hpp"
 #include "resources/ResourceIDs.hpp"
@@ -102,6 +103,9 @@ class World : public sf::Drawable
 
     /// Player object for the player's entity
     std::unique_ptr<Player> _player;
+
+    /// Enemy object for the enemy's entity
+    std::unique_ptr<Enemy> _enemy;
 };
 
 } // namespace HideAndSeekAndShoot

@@ -28,8 +28,7 @@ class Person : public sf::Drawable, public sf::Transformable
   public:
     
     /**
-     * Constructs a non-functional Person object.
-     * If we want the Person to be drawn, we should set a texture for the head (at least)
+     * Constructs a person.
      * 
      * @param[in] world
      *  Pointer to the world from which we are creating the person
@@ -76,6 +75,9 @@ class Person : public sf::Drawable, public sf::Transformable
      */
     void MoveInDirection(sf::Vector2f const dirVector);
     void MoveInDirection(float xDir, float yDir);
+
+    /// Moves the person towards their target point with their speed.
+    void MoveTowardsTargetPoint();
 
     /// Rotates the head sprite so that it points towards the target point
     void PointHeadTowardsTargetPoint();
@@ -151,8 +153,8 @@ class Person : public sf::Drawable, public sf::Transformable
     sf::Vector2f _targetPoint;
 
     /// Speed of the person's movement, in pixels/frame
-    float _speed;
-
+    protected: float _speed; // TODO: make private again. Made it protected for testing purposes (testing Enemy class)
+private:
     /* Person collisions with other objects are detected if the other object is
         within this radius to the player's center.
         Essentially a person is a circle for the collision detection. */

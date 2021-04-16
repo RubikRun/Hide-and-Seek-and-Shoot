@@ -132,6 +132,11 @@ void Person::MoveInDirection(float xDir, float yDir)
     MoveInDirection(sf::Vector2f(xDir, yDir));
 }
 
+void Person::MoveTowardsTargetPoint()
+{
+    MoveInDirection(_targetPoint - sf::Transformable::getPosition());
+}
+
 void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_headSprite);
