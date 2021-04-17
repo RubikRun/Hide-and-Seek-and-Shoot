@@ -15,9 +15,21 @@ class Player : public Person
 
   public:
 
-    // using base class Person's constructor
-    using Person::Person;
+    /**
+     * Constructs a player.
+     * 
+     * @param[in] world
+     *  Pointer to the world from which we are creating the player
+     * @param[in] headTex
+     *  Pointer to the texture to be used for player's head
+     */
+    Player(
+      World const* world,
+      sf::Texture const* headTex
+    );
 
+    // making Update method public
+    using Person::Update;
     // making MoveInDirection method public
     using Person::MoveInDirection;
     // making SetTargetPoint method public

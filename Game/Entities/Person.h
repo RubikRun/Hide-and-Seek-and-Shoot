@@ -25,7 +25,7 @@ class World;
  */
 class Person : public sf::Drawable, public sf::Transformable
 {
-  public:
+  protected:
     
     /**
      * Constructs a person.
@@ -34,16 +34,17 @@ class Person : public sf::Drawable, public sf::Transformable
      *  Pointer to the world from which we are creating the person
      * @param[in] headTex
      *  Pointer to the texture to be used for person's head
+     * @param[in] configFilename
+     *  Name of the file with Person's config (config file for concrete derived class)
      */
     Person(
       World const* world,
-      sf::Texture const* headTex
+      sf::Texture const* headTex,
+      std::string const& configFilename
     );
 
     /// Updates the person for next frame
     virtual void Update();
-
-  protected:
 
     /**
      * Sets a texture for the person's head

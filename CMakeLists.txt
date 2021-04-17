@@ -9,6 +9,7 @@ add_executable(game
     Game/World.cpp
     Game/ControlState.cpp
     Game/Entities/Person.cpp
+    Game/Entities/Player.cpp
     Game/Entities/Enemy.cpp)
 
 # Configure SFML

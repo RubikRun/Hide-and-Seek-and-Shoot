@@ -2,6 +2,13 @@
 
 #include <iostream>
 
+namespace
+{
+
+auto constexpr ENEMY_CONFIG_FILENAME = "Game/config/enemy.conf";
+
+} // namespace
+
 namespace HideAndSeekAndShoot
 {
 
@@ -9,11 +16,9 @@ Enemy::Enemy(
     World const* world,
     sf::Texture const* headTex,
     Player const* player)
-    : Person(world, headTex),
+    : Person(world, headTex, ENEMY_CONFIG_FILENAME),
     _player(player)
-{
-    _speed *= 0.5f;
-}
+{}
 
 void Enemy::Update()
 {

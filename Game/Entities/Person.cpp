@@ -1,4 +1,4 @@
-#define VISUAL_DEBUG 1
+#define VISUAL_DEBUG 0
 
 #include "Person.h"
 
@@ -12,8 +12,6 @@
 
 namespace
 {
-    auto constexpr PERSON_CONFIG_FILENAME = "Game/config/person.conf";
-
     float const SPEED_DEFAULT = 10.f;
 
     float const MOVEMENT_PRECISION_DEFAULT = 1.f;
@@ -26,9 +24,10 @@ namespace HideAndSeekAndShoot
 
 Person::Person(
     World const* world,
-    sf::Texture const* headTex)
+    sf::Texture const* headTex,
+    std::string const& configFilename)
     : _world(world),
-    _config(ConfigUtils::ReadConfig(PERSON_CONFIG_FILENAME))
+    _config(ConfigUtils::ReadConfig(configFilename))
 {
     SetHeadTexture(headTex);
 
