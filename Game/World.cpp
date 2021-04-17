@@ -38,7 +38,7 @@ World::World(
 
     _enemy = std::make_unique<Enemy>(
         this,
-        &texHandler->Get(Resources::Texture::Id::PlayerHead), // TODO: add a new texture EnemyHead
+        &texHandler->Get(Resources::Texture::Id::EnemyHead),
         &*_player
     );
 }
