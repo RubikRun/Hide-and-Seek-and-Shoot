@@ -26,7 +26,7 @@ void Enemy::Update()
 
     Person::Update();
 
-    MoveTowardsTargetPoint();
+    MoveTowards(_targetPoint);
 }
 
 } // namespace HideAndSeekAndShoot

@@ -25,7 +25,7 @@ class World;
  */
 class Person : public sf::Drawable, public sf::Transformable
 {
-  protected:
+  protected: /* functions */
     
     /**
      * Constructs a person.
@@ -62,7 +62,7 @@ class Person : public sf::Drawable, public sf::Transformable
      * @param[in] targetPoint
      *  Target point to be set on the Person
      */
-    void SetTargetPoint(sf::Vector2f const& targetPoint);
+    void SetTargetPoint(sf::Vector2f const targetPoint);
 
     /**
      * Moves the person in the given direction with their speed.
@@ -77,11 +77,46 @@ class Person : public sf::Drawable, public sf::Transformable
     void MoveInDirection(sf::Vector2f const dirVector);
     void MoveInDirection(float xDir, float yDir);
 
-    /// Moves the person towards their target point with their speed.
-    void MoveTowardsTargetPoint();
+    /**
+     * Moves the person towards a target point with their speed.
+     * If there is an obstacle in the way, the person will try to go around it.
+     * The way the person tries to go around object is a little simplistic.
+     * (I will probably implement Dijkstra, or better yet A*, in the future,
+     *  but it will be too computationally intense if it's on a graph of each pixel.
+     *  It will have to choose some sparse pixel grid, for example taking every 10-th pixel.)
+     * If the person cannot go directly in the target direction,
+     * he will choose a valid direction closest to the target direction and go to it.
+     * It does that by trying d + phi, d - phi, d + 2phi, d - 2phi, d + 3phi, d - 3phi, ...
+     * (where d is the direction towards the target point and phi is some tiny angle)
+     * until it finds a direction it can go to.
+     * In practice this works fine for small enough phi,
+     * and also it has a maybe positive side effect:
+     * The movement of the person, when going around obstacles,
+     * is not choosing the best path, but at each point choosing the best direction to go to,
+     * based only on the direction of the target point, and not its absolute position.
+     * Which is cool because it looks more like the person does not see the target point itself
+     * (which makes sense because obviously the target point is blocked out of view)
+     * but knows its general direction.
+     * 
+     * @param[in] targetPoint (or xTarget, yTarget)
+     *  Point towards which the person will move.
+     */
+    void MoveTowards(sf::Vector2f const targetPoint);
+    void MoveTowards(float xTarget, float yTarget);
 
-    /// Rotates the head sprite so that it points towards the target point
-    void PointHeadTowardsTargetPoint();
+    /**
+     * Rotates the head sprite so that it points towards a target point
+     * 
+     * @param[in] targetPoint (or xTarget, yTarget)
+     *  Point towards which the person will point their head
+     */
+    void PointHeadTowards(sf::Vector2f const targetPoint);
+    void PointHeadTowards(float xTarget, float yTarget);
+
+  protected: /* variables */
+
+    /// Target point, towards which the Person is always looking and can shoot
+    sf::Vector2f _targetPoint;
 
   private: /* functions */
 
@@ -115,7 +150,7 @@ class Person : public sf::Drawable, public sf::Transformable
      * 
      * @return true for inside world, false otherwise
      */
-    bool IsPositionInWorld(sf::Vector2f const& position) const;
+    bool IsPositionInWorld(sf::Vector2f const position) const;
 
     /**
      * Checks if a position is outside of all the walls,
@@ -128,7 +163,7 @@ class Person : public sf::Drawable, public sf::Transformable
      * 
      * @return true for outside walls, false if there is an intersection with a wall
      */
-    bool IsPositionOutsideWalls(sf::Vector2f const& position) const;
+    bool IsPositionOutsideWalls(sf::Vector2f const position) const;
 
     /**
      * Checks if a position is valid,
@@ -140,7 +175,7 @@ class Person : public sf::Drawable, public sf::Transformable
      * 
      * @return true for valid position, false for invalid
      */
-    bool IsPositionValid(sf::Vector2f const& position) const;
+    bool IsPositionValid(sf::Vector2f const position) const;
 
   private: /* variables */
 
@@ -150,12 +185,9 @@ class Person : public sf::Drawable, public sf::Transformable
     /// Sprite for the head of the player
     sf::Sprite _headSprite;
 
-    /// Target point, towards which the Person is always looking and can shoot
-    sf::Vector2f _targetPoint;
-
     /// Speed of the person's movement, in pixels/frame
-    protected: float _speed; // TODO: make private again. Made it protected for testing purposes (testing Enemy class)
-private:
+    float _speed;
+
     /* Person collisions with other objects are detected if the other object is
         within this radius to the player's center.
         Essentially a person is a circle for the collision detection. */

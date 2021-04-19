@@ -17,6 +17,8 @@ namespace
     float const MOVEMENT_PRECISION_DEFAULT = 1.f;
 
     sf::Vector2f const INTIAL_POSITION_DEFAULT(0.2f, 0.7f);
+
+    float GO_AROUND_OBSTACLES_ACCURACY = 30.f;
 }
 
 namespace HideAndSeekAndShoot
@@ -39,7 +41,7 @@ Person::Person(
 void Person::Update()
 {
     UpdateTransform();
-    PointHeadTowardsTargetPoint();
+    PointHeadTowards(_targetPoint);
 }
 
 void Person::SetHeadTexture(sf::Texture const* headTex)
@@ -95,7 +97,7 @@ void Person::SetHeadTexture(sf::Texture const* headTex)
     }
 }
 
-void Person::SetTargetPoint(sf::Vector2f const& targetPoint)
+void Person::SetTargetPoint(sf::Vector2f const targetPoint)
 {
     _targetPoint = targetPoint;
 }
@@ -131,9 +133,45 @@ void Person::MoveInDirection(float xDir, float yDir)
     MoveInDirection(sf::Vector2f(xDir, yDir));
 }
 
-void Person::MoveTowardsTargetPoint()
+void Person::MoveTowards(sf::Vector2f const targetPoint)
 {
-    MoveInDirection(_targetPoint - sf::Transformable::getPosition());
+    sf::Vector2f const& currPos = sf::Transformable::getPosition();
+    // Calculate velocity vector in the given direction with the person's constant speed
+    sf::Vector2f velocity = GeometryUtils::NormaliseVector(
+        targetPoint - currPos)
+        * _speed;
+    sf::Vector2f nextPosition = currPos + velocity;
+
+    // If the next position is valid, move the person there
+    if (IsPositionValid(nextPosition))
+    {
+        sf::Transformable::setPosition(nextPosition);
+    }
+    else
+    {
+        float angleStep = M_PI / GO_AROUND_OBSTACLES_ACCURACY;
+        sf::Vector2f lVel = velocity, rVel = velocity;
+        for (float i = 1; i <= GO_AROUND_OBSTACLES_ACCURACY; i += 1.f)
+        {
+            lVel = GeometryUtils::RotateVector(lVel, angleStep);
+            if (IsPositionValid(currPos + lVel))
+            {
+                sf::Transformable::setPosition(currPos + lVel);
+                break;
+            }
+            rVel = GeometryUtils::RotateVector(rVel, angleStep);
+            if (IsPositionValid(currPos + rVel))
+            {
+                sf::Transformable::setPosition(currPos + rVel);
+                break;
+            }
+        }
+    }
+}
+
+void Person::MoveTowards(float xTarget, float yTarget)
+{
+    MoveTowards(sf::Vector2f(xTarget, yTarget));
 }
 
 void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -207,11 +245,11 @@ void Person::UpdateTransform()
     _headSprite.setPosition(sf::Transformable::getPosition());
 }
 
-void Person::PointHeadTowardsTargetPoint()
+void Person::PointHeadTowards(sf::Vector2f const targetPoint)
 {
     // Get normal direction vector from the head to the target point
     sf::Vector2f dirVector = GeometryUtils::NormaliseVector(
-        _headSprite.getPosition() - _targetPoint);
+        _headSprite.getPosition() - targetPoint);
 
     float angle = acos(dirVector.x);
     if (dirVector.y < 0)
@@ -222,7 +260,12 @@ void Person::PointHeadTowardsTargetPoint()
     _headSprite.setRotation(angle * 180.f / M_PI);
 }
 
-bool Person::IsPositionInWorld(sf::Vector2f const& position) const
+void Person::PointHeadTowards(float xTarget, float yTarget)
+{
+    PointHeadTowards(sf::Vector2f(xTarget, yTarget));
+}
+
+bool Person::IsPositionInWorld(sf::Vector2f const position) const
 {
     return (position.x + _collisionRadius < _world->GetSize().x
         && position.x - _collisionRadius >= 0
@@ -230,7 +273,7 @@ bool Person::IsPositionInWorld(sf::Vector2f const& position) const
         && position.y - _collisionRadius >= 0);
 }
 
-bool Person::IsPositionOutsideWalls(sf::Vector2f const& position) const
+bool Person::IsPositionOutsideWalls(sf::Vector2f const position) const
 {
     for (sf::ConvexShape const& wall : _world->GetWalls())
     {
@@ -260,7 +303,7 @@ bool Person::IsPositionOutsideWalls(sf::Vector2f const& position) const
     return true;
 }
 
-bool Person::IsPositionValid(sf::Vector2f const& position) const
+bool Person::IsPositionValid(sf::Vector2f const position) const
 {
     return IsPositionInWorld(position) && IsPositionOutsideWalls(position);
 }

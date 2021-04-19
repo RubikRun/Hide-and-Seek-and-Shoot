@@ -21,7 +21,7 @@ namespace GeometryUtils
  * @return calculated length of the vector
  */
 float GetVectorLength(
-    sf::Vector2f const& v)
+    sf::Vector2f const v)
 {
     return sqrt(v.x * v.x + v.y * v.y);
 }
@@ -55,7 +55,7 @@ sf::Vector2f GetVector(
  * @return normalised vector with length = 1
  */
 sf::Vector2f NormaliseVector(
-    sf::Vector2f const& v)
+    sf::Vector2f const v)
 {
     return v / GetVectorLength(v);
 }
@@ -71,8 +71,8 @@ sf::Vector2f NormaliseVector(
  * @return distance between the two points
  */
 float CalcDist(
-    sf::Vector2f const& pointA,
-    sf::Vector2f const& pointB)
+    sf::Vector2f const pointA,
+    sf::Vector2f const pointB)
 {
     return GetVectorLength(GetVector(pointA, pointB));
 }
@@ -92,8 +92,8 @@ float CalcDist(
  * @return 1, -1 or 0 depending on the orientation of the vectors
  */
 int GetOrientation(
-    sf::Vector2f const& v1,
-    sf::Vector2f const& v2)
+    sf::Vector2f const v1,
+    sf::Vector2f const v2)
 {
     int det = v1.x * v2.y - v1.y * v2.x;
 
@@ -119,10 +119,10 @@ int GetOrientation(
  * @return true when the line intersects the segment, false otherwise
  */
 bool LineIntersectsSegment(
-    sf::Vector2f const& A,
-    sf::Vector2f const& B,
-    sf::Vector2f const& C,
-    sf::Vector2f const& D)
+    sf::Vector2f const A,
+    sf::Vector2f const B,
+    sf::Vector2f const C,
+    sf::Vector2f const D)
 {
     int o1 = GetOrientation(GetVector(A, B), GetVector(B, C));
     if (o1 == 0) return true;
@@ -148,10 +148,10 @@ bool LineIntersectsSegment(
  * @return true when the line segments intersect, false otherwise
  */
 bool SegmentsIntersect(
-    sf::Vector2f const& A,
-    sf::Vector2f const& B,
-    sf::Vector2f const& C,
-    sf::Vector2f const& D)
+    sf::Vector2f const A,
+    sf::Vector2f const B,
+    sf::Vector2f const C,
+    sf::Vector2f const D)
 {
     return LineIntersectsSegment(A, B, C, D) && LineIntersectsSegment(C, D, A, B);
 }
@@ -172,9 +172,9 @@ bool SegmentsIntersect(
  * @return orthogonal projection of the given point
  */
 sf::Vector2f FindOrthogonalProjection(
-    sf::Vector2f const& P,
-    sf::Vector2f const& A,
-    sf::Vector2f const& B)
+    sf::Vector2f const P,
+    sf::Vector2f const A,
+    sf::Vector2f const B)
 {
     float deltaX = B.x - A.x;
     float deltaY = B.y - A.y;
@@ -199,9 +199,9 @@ sf::Vector2f FindOrthogonalProjection(
  *  The point to which the found point should be closest
  */
 sf::Vector2f FindClosestPointOnSegment(
-    sf::Vector2f const& A,
-    sf::Vector2f const& B,
-    sf::Vector2f const& P)
+    sf::Vector2f const A,
+    sf::Vector2f const B,
+    sf::Vector2f const P)
 {
     if (A.x == B.x)
     {
@@ -265,14 +265,53 @@ sf::Vector2f FindClosestPointOnSegment(
  * @return true if segment intersects circle, false otherwise
  */
 bool SegmentIntersectsCircle(
-    sf::Vector2f const& A,
-    sf::Vector2f const& B,
-    sf::Vector2f const& center,
+    sf::Vector2f const A,
+    sf::Vector2f const B,
+    sf::Vector2f const center,
     float const radius)
 {
     sf::Vector2f const Q = FindClosestPointOnSegment(A, B, center);
 
     return (radius * radius >= (Q.x - center.x) * (Q.x - center.x) + (Q.y - center.y) * (Q.y - center.y));
+}
+
+/**
+ * Rotates the vector by some angle
+ * 
+ * @param[in] vec
+ *  Vectore to rotate
+ * @param[in] deltaAngle
+ *  Angle by which the vector will be rotated, in radians
+ * 
+ * @return resulting vector after rotation
+ */
+sf::Vector2f RotateVector(sf::Vector2f const vec, float deltaAngle)
+{
+    float const vecLen = GetVectorLength(vec);
+    sf::Vector2f const unitVec = vec / vecLen;
+
+    double aSin = asin(unitVec.y);
+    double aCos = acos(unitVec.x);
+
+    double angle;
+
+    if (aSin >= 0)
+    {
+        angle = aCos;
+    }
+    else if (aCos < M_PI / 2.0)
+    {
+        angle = aSin;
+    }
+    else
+    {
+        angle = M_PI * 2 - aCos;
+    }
+
+    double resAngle = angle + deltaAngle;
+    sf::Vector2f resUnitVector(cos(resAngle), sin(resAngle));
+
+    return resUnitVector * vecLen;
 }
 
 } // namespace Geometry
