@@ -45,6 +45,23 @@ void Person::Update()
     PointHeadTowards(_targetPoint);
 }
 
+void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(_headSprite, states);
+
+#if VISUAL_DEBUG == 1
+    // Visual debugging to see the collision circle
+    sf::CircleShape circle(_collisionRadius);
+    circle.setOrigin(_collisionRadius, _collisionRadius);
+    circle.setPosition(_headSprite.getPosition());
+    circle.setFillColor(sf::Color::Transparent);
+    circle.setOutlineColor(sf::Color(255, 0, 0, 150));
+    circle.setOutlineThickness(2.f);
+
+    target.draw(circle, states);
+#endif
+}
+
 void Person::SetHeadTexture(sf::Texture const* headTex)
 {
     if (headTex == nullptr)
@@ -173,23 +190,6 @@ void Person::MoveTowards(sf::Vector2f const targetPoint)
 void Person::MoveTowards(float xTarget, float yTarget)
 {
     MoveTowards(sf::Vector2f(xTarget, yTarget));
-}
-
-void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-    target.draw(_headSprite);
-
-#if VISUAL_DEBUG == 1
-    // Visual debugging to see the collision circle
-    sf::CircleShape circle(_collisionRadius);
-    circle.setOrigin(_collisionRadius, _collisionRadius);
-    circle.setPosition(_headSprite.getPosition());
-    circle.setFillColor(sf::Color::Transparent);
-    circle.setOutlineColor(sf::Color(255, 0, 0, 150));
-    circle.setOutlineThickness(2.f);
-
-    target.draw(circle);
-#endif
 }
 
 void Person::ConfigPersonSpeed()

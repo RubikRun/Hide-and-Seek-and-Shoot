@@ -47,6 +47,16 @@ class Person : public sf::Drawable, public sf::Transformable
     virtual void Update();
 
     /**
+     * Draws the person on a render target
+     * 
+     * @param[in] target
+     *  Render target on which to draw the person
+     * @param[in] states
+     *  States/mode of the rendering
+     */
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+    /**
      * Sets a texture for the person's head
      * 
      * @param[in] headTex
@@ -119,16 +129,6 @@ class Person : public sf::Drawable, public sf::Transformable
     sf::Vector2f _targetPoint;
 
   private: /* functions */
-
-    /**
-     * Draws the person on a render target
-     * 
-     * @param[in] target
-     *  Render target on which to draw the person
-     * @param[in] states
-     *  States/mode of the rendering
-     */
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     /// Configures the person speed, as specified in the config
     void ConfigPersonSpeed();

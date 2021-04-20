@@ -2,6 +2,7 @@
 
 #include "Person.h"
 #include "Player.h"
+#include "FieldOfView.h"
 
 namespace HideAndSeekAndShoot
 {
@@ -36,11 +37,25 @@ class Enemy : public Person
     /// Updates the enemy for next frame - moves it towards the player
     void Update();
 
-  private:
+  private: /* functions */
+
+    /**
+     * Draws the enemy on a render target
+     * 
+     * @param[in] target
+     *  Render target on which to draw the enemy
+     * @param[in] states
+     *  States/mode of the rendering
+     */
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+  private: /* variables */
 
     /// Pointer to the player that is being chased by this enemy
     Player const* _player;
 
+    /// Field of view of the enemy
+    FieldOfView _fieldOfView;
 };
 
 } // namespace HideAndSeekAndShoot

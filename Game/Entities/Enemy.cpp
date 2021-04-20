@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "../utils/geometryUtils.hpp"
 
 #include <iostream>
 
@@ -27,6 +28,20 @@ void Enemy::Update()
     Person::Update();
 
     MoveTowards(_targetPoint);
+
+    sf::Vector2f const& pos = sf::Transformable::getPosition();
+    _fieldOfView.SetOrigin(pos);
+    _fieldOfView.SetTargetDirection(
+        GeometryUtils::GetVector(pos, _player->getPosition())
+    );
+    _fieldOfView.Update();
+}
+
+void Enemy::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(_fieldOfView, states);
+
+    Person::draw(target, states);
 }
 
 } // namespace HideAndSeekAndShoot

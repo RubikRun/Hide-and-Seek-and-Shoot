@@ -10,7 +10,8 @@ add_executable(game
     Game/ControlState.cpp
     Game/Entities/Person.cpp
     Game/Entities/Player.cpp
-    Game/Entities/Enemy.cpp)
+    Game/Entities/Enemy.cpp
+    Game/Entities/FieldOfView.cpp)
 
 # Configure SFML
 target_include_directories(game
