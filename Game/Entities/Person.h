@@ -139,6 +139,9 @@ class Person : public sf::Drawable, public sf::Transformable
     /// Configures person's initial position - reads it from the config and sets it to the person
     void ConfigInitialPosition();
 
+    /// Configures person's precision when it comes to going around obstacles
+    void ConfigGoAroundPrecision();
+
     /// Updates the person according to the data derived from sf::Transformable
     void UpdateTransform();
 
@@ -210,6 +213,15 @@ class Person : public sf::Drawable, public sf::Transformable
     So the person did not reach the object fully, because the movement precision is not small enough.
     Recommended value for that variable is 1 or less. */
     float _movementPrecision;
+
+    /* Precision of the person's ability to go around obstacles when moving towards a target point.
+    If there is an obstacle in front of the person, and he cannot move directly towards the target point,
+    he will try to change his direction either to the left or to the right,
+    by trying turning left/right some tiny step angle until he can move in the resulting direction.
+    This variable - the precision - is what specifies that tiny step angle.
+    If the precision is say 30 (recommended), then the tiny angle will be pi / 30.
+    */
+    float _goAroundPrecision;
 
     /// Person configuration
     Config _config;

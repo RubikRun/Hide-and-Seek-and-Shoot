@@ -18,7 +18,7 @@ namespace
 
     sf::Vector2f const INTIAL_POSITION_DEFAULT(0.2f, 0.7f);
 
-    float GO_AROUND_OBSTACLES_ACCURACY = 30.f;
+    float GO_AROUND_PRECISION_DEFAULT = 30.f;
 }
 
 namespace HideAndSeekAndShoot
@@ -36,6 +36,7 @@ Person::Person(
     ConfigInitialPosition();
     ConfigPersonSpeed();
     ConfigMovementPrecision();
+    ConfigGoAroundPrecision();
 }
 
 void Person::Update()
@@ -149,9 +150,9 @@ void Person::MoveTowards(sf::Vector2f const targetPoint)
     }
     else
     {
-        float angleStep = M_PI / GO_AROUND_OBSTACLES_ACCURACY;
+        float angleStep = M_PI / _goAroundPrecision;
         sf::Vector2f lVel = velocity, rVel = velocity;
-        for (float i = 1; i <= GO_AROUND_OBSTACLES_ACCURACY; i += 1.f)
+        for (float i = 1; i <= _goAroundPrecision; i += 1.f)
         {
             lVel = GeometryUtils::RotateVector(lVel, angleStep);
             if (IsPositionValid(currPos + lVel))
@@ -238,6 +239,19 @@ void Person::ConfigInitialPosition()
         relInitialPosition.x * _world->GetSize().x,
         relInitialPosition.y * _world->GetSize().y
     );
+}
+
+void Person::ConfigGoAroundPrecision()
+{
+    auto goAroundPrecisionConfig = _config.find("go_around_precision");
+    if (goAroundPrecisionConfig != _config.end())
+    {
+        _goAroundPrecision = std::stof(goAroundPrecisionConfig->second);
+    }
+    else
+    {
+        _goAroundPrecision = GO_AROUND_PRECISION_DEFAULT;
+    }
 }
 
 void Person::UpdateTransform()
