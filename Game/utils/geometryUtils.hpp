@@ -287,31 +287,13 @@ bool SegmentIntersectsCircle(
  */
 sf::Vector2f RotateVector(sf::Vector2f const vec, float deltaAngle)
 {
-    float const vecLen = GetVectorLength(vec);
-    sf::Vector2f const unitVec = vec / vecLen;
+    float cosDelta = cos(deltaAngle), sinDelta = sin(deltaAngle);
+    float const &cosAngle = vec.x, &sinAngle = vec.y;
 
-    double aSin = asin(unitVec.y);
-    double aCos = acos(unitVec.x);
-
-    double angle;
-
-    if (aSin >= 0)
-    {
-        angle = aCos;
-    }
-    else if (aCos < M_PI / 2.0)
-    {
-        angle = aSin;
-    }
-    else
-    {
-        angle = M_PI * 2 - aCos;
-    }
-
-    double resAngle = angle + deltaAngle;
-    sf::Vector2f resUnitVector(cos(resAngle), sin(resAngle));
-
-    return resUnitVector * vecLen;
+    return sf::Vector2f(
+        cosAngle * cosDelta - sinAngle * sinDelta,
+        sinAngle * cosDelta + cosAngle * sinDelta
+    );
 }
 
 } // namespace Geometry
