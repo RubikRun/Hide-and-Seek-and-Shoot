@@ -2,8 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <vector>
+
 namespace HideAndSeekAndShoot
 {
+
+class World;
 
 /**
  * A class representing the field of view of an entity looking at some direction.
@@ -18,6 +22,10 @@ class FieldOfView : public sf::Drawable
     /**
      * Constructs a field of view from an origin point towards a target point.
      * 
+     * @param[in] world
+     *  Pointer to the world in which the field of view will function.
+     *  Needed so that the field of view knows where the world's walls are located,
+     *  so that it can be blocked by those walls.
      * @param[in] origin
      *  Origin point. The point from which the field of view is "viewed"
      * @param[in] targetDir
@@ -25,6 +33,7 @@ class FieldOfView : public sf::Drawable
      *  This is the central direction of the field of view.
      */
     FieldOfView(
+        World const* world,
         sf::Vector2f const origin = {0.f, 0.f},
         sf::Vector2f const targetDir = {1.f, 1.f}
     );
@@ -63,7 +72,24 @@ class FieldOfView : public sf::Drawable
     /// Updates the lines that visually represent the field of view, according to the current origin, target direction and angle
     void UpdateLines();
 
+    /**
+     * Finds the intersection end of a line going from some origin point towards some infinite end point.
+     * The intersection end of the line is the first point on the line (starting from the origin,
+     * going towards the infinite end point) that is an intersection with some object in the world.
+     * 
+     * @param[in] lineOrigin
+     *  The origin point of the line
+     * @param[in] lineInfiniteEnd
+     *  The infinite end point of the line
+     * 
+     * @return the found intersection end of the line
+     */
+    sf::Vector2f FindIntersectionEndOfLine(sf::Vector2f lineOrigin, sf::Vector2f lineInfiniteEnd) const;
+
   private: /* variables */
+
+    /// Pointer to the world in which the field of view functions
+    World const* _world;
 
     /// The origin of the field. The field is viewed from this point
     sf::Vector2f _origin;

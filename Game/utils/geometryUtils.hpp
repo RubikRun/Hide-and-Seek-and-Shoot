@@ -157,6 +157,87 @@ bool SegmentsIntersect(
 }
 
 /**
+ * Finds the point of intersection between two line segments.
+ * (If they don't intersect, the function returns {0, 0})
+ * (If they have more than one common point, one of them is returned)
+ * The two line segments are defined by their end points A, B and C, D.
+ * 
+ * @param[in] A
+ *  First end point of the first segment
+ * @param[in] B
+ *  Second end point of the first segment
+ * @param[in] C
+ *  First end point of the second segment
+ * @param[in] D
+ *  Second end point of the second segment
+ * 
+ * @return point of intersection between the two line segments
+ */
+sf::Vector2f FindSegmentsIntersection(
+    sf::Vector2f A,
+    sf::Vector2f B,
+    sf::Vector2f C,
+    sf::Vector2f D)
+{
+    if (!SegmentsIntersect(A, B, C, D))
+    {
+        return {0, 0};
+    }
+
+    if (A.y > B.y)
+    {
+        sf::Vector2f T = A;
+        A = B;
+        B = T;
+    }
+    if (C.y > D.y)
+    {
+        sf::Vector2f T = C;
+        C = D;
+        D = T;
+    }
+
+    if (A.x == B.x && C.x == D.x)
+    {
+        if (A.y >= C.y && A.y <= D.y && B.y >= C.y && B.y <= D.y)
+        {
+            return A;
+        }
+        if (C.y >= A.y && C.y <= B.y)
+        {
+            return C;
+        }
+        if (D.y >= A.y && D.y <= B.y)
+        {
+            return D;
+        }
+        return {0, 0}; // should never reach here
+    }
+    if (A.x == B.x)
+    {
+        return {
+            A.x,
+            C.y + (D.y - C.y) * (A.x - C.x) / (D.x - C.x)
+        };
+    }
+    if (C.x == D.x)
+    {
+        return {
+            C.x,
+            A.y + (B.y - A.y) * (C.x - A.x) / (B.x - A.x)
+        };
+    }
+
+    float abSlope = (B.y - A.y) / (B.x - A.x);
+    float cdSlope = (D.y - C.y) / (D.x - C.x);
+
+    float x = (C.y - A.y + abSlope * A.x - cdSlope * C.x) / (abSlope - cdSlope);
+    float y = abSlope * x + A.y - abSlope * A.x;
+
+    return {x, y};
+}
+
+/**
  * Finds the orthogonal projection of a point P onto a line.
  * The line is defined by two points A and B lying on it.
  * Orthogonal means perpendicular.

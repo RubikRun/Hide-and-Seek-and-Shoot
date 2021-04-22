@@ -18,7 +18,8 @@ Enemy::Enemy(
     sf::Texture const* headTex,
     Player const* player)
     : Person(world, headTex, ENEMY_CONFIG_FILENAME),
-    _player(player)
+    _player(player),
+    _fieldOfView(world)
 {}
 
 void Enemy::Update()
