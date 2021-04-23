@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Gun.h"
+
 #include <string>
 #include <map>
 
@@ -25,6 +27,15 @@ class World;
  */
 class Person : public sf::Drawable, public sf::Transformable
 {
+
+  public:
+
+    /// Returns a pointer to the world from which this person is
+    World const* GetWorld() const;
+
+    /// Returns the target point of the person
+    sf::Vector2f GetTargetPoint() const;
+
   protected: /* functions */
     
     /**
@@ -34,12 +45,15 @@ class Person : public sf::Drawable, public sf::Transformable
      *  Pointer to the world from which we are creating the person
      * @param[in] headTex
      *  Pointer to the texture to be used for person's head
+     * @param[in] gunTex
+     *  Pointer to the texture to be used for person's gun
      * @param[in] configFilename
      *  Name of the file with Person's config (config file for concrete derived class)
      */
     Person(
       World const* world,
       sf::Texture const* headTex,
+      sf::Texture const* gunTex,
       std::string const& configFilename
     );
 
@@ -187,6 +201,9 @@ class Person : public sf::Drawable, public sf::Transformable
 
     /// Sprite for the head of the player
     sf::Sprite _headSprite;
+
+    /// The person's gun
+    Gun _gun;
 
     /// Speed of the person's movement, in pixels/frame
     float _speed;

@@ -22,15 +22,18 @@ class Enemy : public Person
      * Constructs an enemy.
      * 
      * @param[in] world
-     *  Pointer to the world from which we are creating the person
+     *  Pointer to the world from which we are creating the enemy
      * @param[in] headTex
-     *  Pointer to the texture to be used for person's head
+     *  Pointer to the texture to be used for enemy's head
+     * @param[in] gunTex
+     *  Pointer to the texture to be used for enemy's gun
      * @param[in] player
      *  Pointer to a player object - the one that will be chased by the constructed enemy.
      */
     Enemy(
         World const* world,
         sf::Texture const* headTex,
+        sf::Texture const* gunTex,
         Player const* player
     );
 

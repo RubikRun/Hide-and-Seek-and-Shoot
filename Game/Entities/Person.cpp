@@ -24,12 +24,24 @@ namespace
 namespace HideAndSeekAndShoot
 {
 
+World const* Person::GetWorld() const
+{
+    return _world;
+}
+
+sf::Vector2f Person::GetTargetPoint() const
+{
+    return _targetPoint;
+}
+
 Person::Person(
     World const* world,
     sf::Texture const* headTex,
+    sf::Texture const* gunTex,
     std::string const& configFilename)
     : _world(world),
-    _config(ConfigUtils::ReadConfig(configFilename))
+    _config(ConfigUtils::ReadConfig(configFilename)),
+    _gun(this, gunTex)
 {
     SetHeadTexture(headTex);
 
@@ -43,6 +55,7 @@ void Person::Update()
 {
     UpdateTransform();
     PointHeadTowards(_targetPoint);
+    _gun.Update();
 }
 
 void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -60,6 +73,8 @@ void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     target.draw(circle, states);
 #endif
+
+    target.draw(_gun, states);
 }
 
 void Person::SetHeadTexture(sf::Texture const* headTex)

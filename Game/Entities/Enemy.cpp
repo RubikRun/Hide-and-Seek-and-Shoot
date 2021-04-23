@@ -16,8 +16,9 @@ namespace HideAndSeekAndShoot
 Enemy::Enemy(
     World const* world,
     sf::Texture const* headTex,
+    sf::Texture const* gunTex,
     Player const* player)
-    : Person(world, headTex, ENEMY_CONFIG_FILENAME),
+    : Person(world, headTex, gunTex, ENEMY_CONFIG_FILENAME),
     _player(player),
     _fieldOfView(world)
 {}

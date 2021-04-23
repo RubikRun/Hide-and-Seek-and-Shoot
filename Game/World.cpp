@@ -33,12 +33,14 @@ World::World(
 
     _player = std::make_unique<Player>(
         this,
-        &texHandler->Get(Resources::Texture::Id::PlayerHead)
+        &texHandler->Get(Resources::Texture::Id::PlayerHead),
+        &texHandler->Get(Resources::Texture::Id::Gun)
     );
 
     _enemy = std::make_unique<Enemy>(
         this,
         &texHandler->Get(Resources::Texture::Id::EnemyHead),
+        &texHandler->Get(Resources::Texture::Id::Gun),
         &*_player
     );
 }
