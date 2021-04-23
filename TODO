@@ -50,3 +50,7 @@
     direction vector within a small enough angle to the first one
     (probably less than 90 degrees is fine).
     But how would that be detected? I currently have no idea.
+
+- CODE DUPLICATION:
+    Gun class and Person class do a lot of same things,
+    maybe move those things to another interface class, or sth
