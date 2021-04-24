@@ -117,8 +117,8 @@ void Gun::FollowPerson(Person const* person)
 
     // The vector from person to gun should be perpendicular to where the person is looking at
     sf::Vector2f personToGunNormalVector = sf::Vector2f(
-        lookDir.y,
-        -lookDir.x
+        -lookDir.y,
+        lookDir.x
     );
     personToGunNormalVector = GeometryUtils::NormaliseVector(personToGunNormalVector);
 
