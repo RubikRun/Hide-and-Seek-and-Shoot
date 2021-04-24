@@ -11,6 +11,8 @@ namespace
 
 auto constexpr GUN_CONFIG_FILENAME = "Game/config/gun.conf";
 
+auto constexpr BULLET_CONFIG_FILENAME = "Game/config/bullet.conf";
+
 float const DIST_PERSON_REL_DEFAULT = 0.8f;
 
 } // namespace
@@ -20,9 +22,12 @@ namespace HideAndSeekAndShoot
 
 Gun::Gun(
     Person const* person,
-    sf::Texture const* tex)
+    sf::Texture const* tex,
+    sf::Texture const* bulletTex)
     : _person(person),
-    _config(ConfigUtils::ReadConfig(GUN_CONFIG_FILENAME))
+    _config(ConfigUtils::ReadConfig(GUN_CONFIG_FILENAME)),
+    _bulletTex(bulletTex),
+    _bulletConfig(ConfigUtils::ReadConfig(BULLET_CONFIG_FILENAME))
 {
     SetGunTexture(tex);
     ConfigDistPerson();
@@ -35,6 +40,27 @@ void Gun::Update()
     PointGunTowards(_person->GetTargetPoint());
     FollowPerson(_person);
     UpdateTransform();
+}
+
+Person const* Gun::GetPerson() const
+{
+    return _person;
+}
+
+std::unique_ptr<Bullet> Gun::Shoot() const
+{
+    std::unique_ptr<Bullet> bullet =
+        std::make_unique<Bullet>(
+            this,
+            _bulletTex,
+            &_bulletConfig,
+            GeometryUtils::GetVector(
+                sf::Transformable::getPosition(),
+                _person->GetTargetPoint()
+            )
+        );
+
+    return bullet;
 }
 
 void Gun::draw(sf::RenderTarget& target, sf::RenderStates states) const

@@ -13,8 +13,9 @@ namespace HideAndSeekAndShoot
 Player::Player(
     World const* world,
     sf::Texture const* headTex,
-    sf::Texture const* gunTex)
-    : Person(world, headTex, gunTex, PLAYER_CONFIG_FILENAME)
+    sf::Texture const* gunTex,
+    sf::Texture const* bulletTex)
+    : Person(world, headTex, gunTex, bulletTex, PLAYER_CONFIG_FILENAME)
 {}
 
 } // namespace HideAndSeekAndShoot

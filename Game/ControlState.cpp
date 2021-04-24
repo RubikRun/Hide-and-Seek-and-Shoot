@@ -23,6 +23,8 @@ void ControlState::Update()
     _leftPressed = sf::Keyboard::isKeyPressed(_leftKey);
     _rightPressed = sf::Keyboard::isKeyPressed(_rightKey);
 
+    _shootButtonPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
     _mousePosition = (sf::Vector2f)sf::Mouse::getPosition(_window);
 }
 
@@ -44,6 +46,11 @@ bool ControlState::IsLeftPressed() const
 bool ControlState::IsRightPressed() const
 {
     return _rightPressed;
+}
+
+bool ControlState::IsShootButtonPressed() const
+{
+    return _shootButtonPressed;
 }
 
 sf::Vector2f ControlState::GetMousePosition() const

@@ -39,6 +39,13 @@ class Person : public sf::Drawable, public sf::Transformable
     /// Returns the size of the person's head
     sf::Vector2f GetHeadSize() const;
 
+    /**
+     * Shoots a bullet towards its target point.
+     * 
+     * @return a pointer to the created bullet
+     */
+    std::unique_ptr<Bullet> Shoot() const;
+
   protected: /* functions */
     
     /**
@@ -50,6 +57,8 @@ class Person : public sf::Drawable, public sf::Transformable
      *  Pointer to the texture to be used for person's head
      * @param[in] gunTex
      *  Pointer to the texture to be used for person's gun
+     * @param[in] bulletTex
+     *  Pointer to the texture to be used for bullets shot from person's gun
      * @param[in] configFilename
      *  Name of the file with Person's config (config file for concrete derived class)
      */
@@ -57,6 +66,7 @@ class Person : public sf::Drawable, public sf::Transformable
       World const* world,
       sf::Texture const* headTex,
       sf::Texture const* gunTex,
+      sf::Texture const* bulletTex,
       std::string const& configFilename
     );
 

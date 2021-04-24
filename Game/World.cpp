@@ -34,13 +34,15 @@ World::World(
     _player = std::make_unique<Player>(
         this,
         &texHandler->Get(Resources::Texture::Id::PlayerHead),
-        &texHandler->Get(Resources::Texture::Id::Gun)
+        &texHandler->Get(Resources::Texture::Id::Gun),
+        &texHandler->Get(Resources::Texture::Id::Bullet)
     );
 
     _enemy = std::make_unique<Enemy>(
         this,
         &texHandler->Get(Resources::Texture::Id::EnemyHead),
         &texHandler->Get(Resources::Texture::Id::Gun),
+        &texHandler->Get(Resources::Texture::Id::Bullet),
         &*_player
     );
 }
@@ -97,6 +99,18 @@ void World::Update(ControlState const& controlState)
     _player->Update();
 
     _enemy->Update();
+
+    if (controlState.IsShootButtonPressed())
+    {
+        _bullets.push_back(
+            _player->Shoot()
+        );
+    }
+
+    for (int i = 0; i < _bullets.size(); i++)
+    {
+        _bullets[i]->Update();
+    }
 }
 
 void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -110,6 +124,11 @@ void World::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     target.draw(*_enemy);
     target.draw(*_player);
+
+    for (int i = 0; i < _bullets.size(); i++)
+    {
+        target.draw(*_bullets[i], states);
+    }
 }
 
 void World::LoadRelWalls()

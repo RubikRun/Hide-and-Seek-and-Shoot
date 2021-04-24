@@ -15,6 +15,7 @@ auto constexpr WALL_TEXTURE_FILENAME = "Game/resources/textures/wall.png";
 auto constexpr PLAYER_HEAD_TEXTURE_FILENAME = "Game/resources/textures/playerHead.png";
 auto constexpr ENEMY_HEAD_TEXTURE_FILENAME = "Game/resources/textures/enemyHead.png";
 auto constexpr GUN_TEXTURE_FILENAME = "Game/resources/textures/gun.png";
+auto constexpr BULLET_TEXTURE_FILENAME = "Game/resources/textures/bullet.png";
 
 sf::Keyboard::Key const KEY_QUIT_GAME = sf::Keyboard::Escape;
 
@@ -151,6 +152,7 @@ void Game::LoadResources()
     _textureHandler.Load(Resources::Texture::Id::PlayerHead, PLAYER_HEAD_TEXTURE_FILENAME);
     _textureHandler.Load(Resources::Texture::Id::EnemyHead, ENEMY_HEAD_TEXTURE_FILENAME);
     _textureHandler.Load(Resources::Texture::Id::Gun, GUN_TEXTURE_FILENAME);
+    _textureHandler.Load(Resources::Texture::Id::Bullet, BULLET_TEXTURE_FILENAME);
 }
 
 } // namespace HideAndSeekAndShoot

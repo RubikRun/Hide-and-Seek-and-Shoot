@@ -39,10 +39,16 @@ sf::Vector2f Person::GetHeadSize() const
     return { _headSprite.getGlobalBounds().width, _headSprite.getGlobalBounds().height };
 }
 
+std::unique_ptr<Bullet> Person::Shoot() const
+{
+    return _gun->Shoot();
+}
+
 Person::Person(
     World const* world,
     sf::Texture const* headTex,
     sf::Texture const* gunTex,
+    sf::Texture const* bulletTex,
     std::string const& configFilename)
     : _world(world),
     _config(ConfigUtils::ReadConfig(configFilename))
@@ -54,7 +60,7 @@ Person::Person(
     ConfigMovementPrecision();
     ConfigGoAroundPrecision();
 
-    _gun = std::make_unique<Gun>(this, gunTex);
+    _gun = std::make_unique<Gun>(this, gunTex, bulletTex);
 }
 
 void Person::Update()

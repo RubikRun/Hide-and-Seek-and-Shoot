@@ -2,6 +2,7 @@
 
 #include "Entities/Player.h"
 #include "Entities/Enemy.h"
+#include "Entities/Bullet.h"
 
 #include "resources/ResourceHandler.hpp"
 #include "resources/ResourceIDs.hpp"
@@ -106,6 +107,9 @@ class World : public sf::Drawable
 
     /// Enemy object for the enemy's entity
     std::unique_ptr<Enemy> _enemy;
+
+    /// List of currently existing bullets (TODO: maybe use linked list instead of vector)
+    std::vector<std::unique_ptr<Bullet>> _bullets;
 };
 
 } // namespace HideAndSeekAndShoot

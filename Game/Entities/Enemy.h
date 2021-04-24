@@ -27,6 +27,8 @@ class Enemy : public Person
      *  Pointer to the texture to be used for enemy's head
      * @param[in] gunTex
      *  Pointer to the texture to be used for enemy's gun
+     * @param[in] gunTex
+     *  Pointer to the texture to be used for bullets shot from enemy's gun
      * @param[in] player
      *  Pointer to a player object - the one that will be chased by the constructed enemy.
      */
@@ -34,6 +36,7 @@ class Enemy : public Person
         World const* world,
         sf::Texture const* headTex,
         sf::Texture const* gunTex,
+        sf::Texture const* bulletTex,
         Player const* player
     );
 

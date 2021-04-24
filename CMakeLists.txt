@@ -12,6 +12,7 @@ add_executable(game
     Game/Entities/Player.cpp
     Game/Entities/Enemy.cpp
     Game/Entities/Gun.cpp
+    Game/Entities/Bullet.cpp
     Game/Entities/FieldOfView.cpp)
 
 # Configure SFML

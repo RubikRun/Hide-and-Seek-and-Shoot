@@ -51,6 +51,9 @@ struct ControlState
     bool IsLeftPressed() const;
     bool IsRightPressed() const;
 
+    /// Checks whether the button used to shoot bullets is currently pressed
+    bool IsShootButtonPressed() const;
+
     /**
      * Returns current mouse position relative to the window.
      * 
@@ -65,6 +68,9 @@ struct ControlState
     
     /// Variables indicating whether the UP, DOWN, LEFT and RIGHT keys are currently pressed
     bool _upPressed, _downPressed, _leftPressed, _rightPressed;
+
+    /// Variable indicating whether the button for shooting is currently pressed
+    bool _shootButtonPressed;
 
     /// Position of the mouse on the window
     sf::Vector2f _mousePosition;

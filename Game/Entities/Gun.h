@@ -8,6 +8,7 @@ namespace HideAndSeekAndShoot
 {
 
 class Person;
+class Bullet;
 
 /**
  * A class representing a (person's) gun in the game.
@@ -27,14 +28,27 @@ class Gun : public sf::Drawable, public sf::Transformable
      *  A pointer to the person whose gun this will be
      * @param[in] tex
      *  A pointer to the texture to be used for the gun
+     * @param[in] bulletTex
+     *  A pointer to the texture to be used for bullets
      */
     Gun(
         Person const* person,
-        sf::Texture const* tex
+        sf::Texture const* tex,
+        sf::Texture const* bulletTex
     );
 
     /// Updates gun for next frame
     void Update();
+
+    /// Returns a pointer to the person owner of this gun
+    Person const* GetPerson() const;
+
+    /**
+     * Shoots a bullet towards its owner's target point.
+     * 
+     * @return a pointer to the created bullet
+     */
+    std::unique_ptr<Bullet> Shoot() const;
 
   private: /* functions */
 
@@ -87,8 +101,14 @@ class Gun : public sf::Drawable, public sf::Transformable
     /// Distance between person and gun
     float _distPerson;
 
+    /// Pointer to the texture to be used for bullets
+    sf::Texture const* _bulletTex;
+
     /// Gun configuration
     Config _config;
+
+    /// Bullet configuration
+    Config _bulletConfig;
 };
 
 } // namespace HideAndSeekAndShoot

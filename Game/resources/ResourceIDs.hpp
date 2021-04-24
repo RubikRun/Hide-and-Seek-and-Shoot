@@ -10,7 +10,7 @@ namespace HideAndSeekAndShoot
 
         namespace Texture
         {
-            enum class Id { Background, Wall, PlayerHead, EnemyHead, Gun };
+            enum class Id { Background, Wall, PlayerHead, EnemyHead, Gun, Bullet };
         }
 
         namespace Sound

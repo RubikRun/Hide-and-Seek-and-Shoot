@@ -24,11 +24,14 @@ class Player : public Person
      *  Pointer to the texture to be used for player's head
      * @param[in] gunTex
      *  Pointer to the texture to be used for player's gun
+     * @param[in] gunTex
+     *  Pointer to the texture to be used for bullets shot from player's gun
      */
     Player(
       World const* world,
       sf::Texture const* headTex,
-      sf::Texture const* gunTex
+      sf::Texture const* gunTex,
+      sf::Texture const* bulletTex
     );
 
     // making Update method public

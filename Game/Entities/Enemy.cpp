@@ -17,8 +17,9 @@ Enemy::Enemy(
     World const* world,
     sf::Texture const* headTex,
     sf::Texture const* gunTex,
+    sf::Texture const* bulletTex,
     Player const* player)
-    : Person(world, headTex, gunTex, ENEMY_CONFIG_FILENAME),
+    : Person(world, headTex, gunTex, bulletTex, ENEMY_CONFIG_FILENAME),
     _player(player),
     _fieldOfView(world)
 {}
