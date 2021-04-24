@@ -11,8 +11,7 @@ namespace
 
 auto constexpr GUN_CONFIG_FILENAME = "Game/config/gun.conf";
 
-// TODO: move in config and make relative
-float const PERSON_DIST = 70.f;
+float const DIST_PERSON_REL_DEFAULT = 0.8f;
 
 } // namespace
 
@@ -26,6 +25,7 @@ Gun::Gun(
     _config(ConfigUtils::ReadConfig(GUN_CONFIG_FILENAME))
 {
     SetGunTexture(tex);
+    ConfigDistPerson();
 
     sf::Transformable::setPosition(300.f, 300.f);
 }
@@ -125,8 +125,22 @@ void Gun::FollowPerson(Person const* person)
     // The gun should be positioned some contant distance away from the person, in the perpendicular direction
     sf::Transformable::setPosition(
         person->getPosition()
-            + personToGunNormalVector * PERSON_DIST
+            + personToGunNormalVector * _distPerson
     );
+}
+
+void Gun::ConfigDistPerson()
+{
+    auto distPersonConfig = _config.find("dist_person");
+    if (distPersonConfig != _config.end())
+    {
+        float distPersonRel = std::stof(distPersonConfig->second);
+        _distPerson = distPersonRel * _person->GetHeadSize().x;
+    }
+    else
+    {
+        _distPerson = DIST_PERSON_REL_DEFAULT * _person->GetHeadSize().x;
+    }
 }
 
 } // namespace HideAndSeekAndShoot

@@ -36,6 +36,9 @@ class Person : public sf::Drawable, public sf::Transformable
     /// Returns the target point of the person
     sf::Vector2f GetTargetPoint() const;
 
+    /// Returns the size of the person's head
+    sf::Vector2f GetHeadSize() const;
+
   protected: /* functions */
     
     /**
@@ -203,7 +206,7 @@ class Person : public sf::Drawable, public sf::Transformable
     sf::Sprite _headSprite;
 
     /// The person's gun
-    Gun _gun;
+    std::unique_ptr<Gun> _gun;
 
     /// Speed of the person's movement, in pixels/frame
     float _speed;

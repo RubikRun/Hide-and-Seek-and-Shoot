@@ -34,14 +34,18 @@ sf::Vector2f Person::GetTargetPoint() const
     return _targetPoint;
 }
 
+sf::Vector2f Person::GetHeadSize() const
+{
+    return { _headSprite.getGlobalBounds().width, _headSprite.getGlobalBounds().height };
+}
+
 Person::Person(
     World const* world,
     sf::Texture const* headTex,
     sf::Texture const* gunTex,
     std::string const& configFilename)
     : _world(world),
-    _config(ConfigUtils::ReadConfig(configFilename)),
-    _gun(this, gunTex)
+    _config(ConfigUtils::ReadConfig(configFilename))
 {
     SetHeadTexture(headTex);
 
@@ -49,12 +53,14 @@ Person::Person(
     ConfigPersonSpeed();
     ConfigMovementPrecision();
     ConfigGoAroundPrecision();
+
+    _gun = std::make_unique<Gun>(this, gunTex);
 }
 
 void Person::Update()
 {
     PointHeadTowards(_targetPoint);
-    _gun.Update();
+    _gun->Update();
     UpdateTransform();
 }
 
@@ -74,7 +80,7 @@ void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(circle, states);
 #endif
 
-    target.draw(_gun, states);
+    target.draw(*_gun, states);
 }
 
 void Person::SetHeadTexture(sf::Texture const* headTex)

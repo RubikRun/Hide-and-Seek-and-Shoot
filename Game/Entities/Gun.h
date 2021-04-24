@@ -71,6 +71,11 @@ class Gun : public sf::Drawable, public sf::Transformable
      */
     void FollowPerson(Person const* person);
 
+    /**
+     * Configures the distance between person and gun, as specified in the config.
+     */
+    void ConfigDistPerson();
+
   private: /* variables */
 
     /// Pointer to the person owner of the gun
@@ -78,6 +83,9 @@ class Gun : public sf::Drawable, public sf::Transformable
 
     /// Sprite for visualising the gun
     sf::Sprite _sprite;
+
+    /// Distance between person and gun
+    float _distPerson;
 
     /// Gun configuration
     Config _config;
