@@ -15,7 +15,7 @@ class Person;
  * The gun is always pointed towards its owner's target point,
  * and can shoot bullets to it.
  */
-class Gun : public sf::Drawable
+class Gun : public sf::Drawable, public sf::Transformable
 {
 
   public:
@@ -40,6 +40,9 @@ class Gun : public sf::Drawable
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
+    /// Updates the gun according to the data derived from sf::Transformable
+    void UpdateTransform();
+
     /**
      * Sets a texture to the gun's sprite.
      * Makes sure it is scaled appropriately to match the size from the config
@@ -57,6 +60,16 @@ class Gun : public sf::Drawable
      */
     void PointGunTowards(sf::Vector2f const targetPoint);
     void PointGunTowards(float xTarget, float yTarget);
+
+    /**
+     * Moves the gun so that it follows the person.
+     * There should be a constant distance between the gun and the person,
+     * and the gun should always be at one side of the person.
+     * 
+     * @param[in] person
+     *  Pointer to the person to follow (will mostly be the same as the member variable _person)
+     */
+    void FollowPerson(Person const* person);
 
   private: /* variables */
 

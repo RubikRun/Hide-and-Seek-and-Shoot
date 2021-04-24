@@ -53,9 +53,9 @@ Person::Person(
 
 void Person::Update()
 {
-    UpdateTransform();
     PointHeadTowards(_targetPoint);
     _gun.Update();
+    UpdateTransform();
 }
 
 void Person::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -272,6 +272,7 @@ void Person::ConfigGoAroundPrecision()
 void Person::UpdateTransform()
 {
     _headSprite.setPosition(sf::Transformable::getPosition());
+    _headSprite.setRotation(sf::Transformable::getRotation());
 }
 
 void Person::PointHeadTowards(sf::Vector2f const targetPoint)
@@ -286,7 +287,7 @@ void Person::PointHeadTowards(sf::Vector2f const targetPoint)
         angle = -angle;
     }
 
-    _headSprite.setRotation(angle * 180.f / M_PI);
+    sf::Transformable::setRotation(angle * 180.f / M_PI);
 }
 
 void Person::PointHeadTowards(float xTarget, float yTarget)

@@ -11,6 +11,9 @@ namespace
 
 auto constexpr GUN_CONFIG_FILENAME = "Game/config/gun.conf";
 
+// TODO: move in config and make relative
+float const PERSON_DIST = 70.f;
+
 } // namespace
 
 namespace HideAndSeekAndShoot
@@ -24,17 +27,25 @@ Gun::Gun(
 {
     SetGunTexture(tex);
 
-    _sprite.setPosition(300.f, 300.f);
+    sf::Transformable::setPosition(300.f, 300.f);
 }
 
 void Gun::Update()
 {
     PointGunTowards(_person->GetTargetPoint());
+    FollowPerson(_person);
+    UpdateTransform();
 }
 
 void Gun::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_sprite, states);
+}
+
+void Gun::UpdateTransform()
+{
+    _sprite.setPosition(sf::Transformable::getPosition());
+    _sprite.setRotation(sf::Transformable::getRotation());
 }
 
 void Gun::SetGunTexture(sf::Texture const* tex)
@@ -80,7 +91,7 @@ void Gun::PointGunTowards(sf::Vector2f const targetPoint)
 {
     // Get normal direction vector from the gun to the target point
     sf::Vector2f dirVector = GeometryUtils::NormaliseVector(
-        _sprite.getPosition() - targetPoint);
+        sf::Transformable::getPosition() - targetPoint);
 
     float angle = acos(dirVector.x);
     if (dirVector.y < 0)
@@ -88,12 +99,34 @@ void Gun::PointGunTowards(sf::Vector2f const targetPoint)
         angle = -angle;
     }
 
-    _sprite.setRotation(angle * 180.f / M_PI);
+    sf::Transformable::setRotation(angle * 180.f / M_PI);
 }
 
 void Gun::PointGunTowards(float xTarget, float yTarget)
 {
     PointGunTowards(sf::Vector2f(xTarget, yTarget));
+}
+
+void Gun::FollowPerson(Person const* person)
+{
+    // Direction vector of where the person is looking at
+    sf::Vector2f lookDir = GeometryUtils::GetVector(
+        person->getPosition(),
+        person->GetTargetPoint()
+    );
+
+    // The vector from person to gun should be perpendicular to where the person is looking at
+    sf::Vector2f personToGunNormalVector = sf::Vector2f(
+        lookDir.y,
+        -lookDir.x
+    );
+    personToGunNormalVector = GeometryUtils::NormaliseVector(personToGunNormalVector);
+
+    // The gun should be positioned some contant distance away from the person, in the perpendicular direction
+    sf::Transformable::setPosition(
+        person->getPosition()
+            + personToGunNormalVector * PERSON_DIST
+    );
 }
 
 } // namespace HideAndSeekAndShoot
