@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+typedef std::map<std::string, std::string> Config;
+
 namespace HideAndSeekAndShoot
 {
 
@@ -61,7 +63,12 @@ struct ControlState
      */
     sf::Vector2f GetMousePosition() const;
 
-  private:
+  private: /* functions */
+
+    /// Configures time between shots, as specified in the config
+    void ConfigTimeBetweenShoots();
+
+  private: /* variables */
 
     /// Keys on the keyboard that correspond to UP, DOWN, LEFT and RIGHT
     sf::Keyboard::Key _upKey, _downKey, _leftKey, _rightKey;
@@ -71,12 +78,19 @@ struct ControlState
 
     /// Variable indicating whether the button for shooting is currently pressed
     bool _shootButtonPressed;
+    /// Time, in frames, since the last time the shoot button has been pressed
+    int _timeSinceLastShootButtonPress;
+    /// Time, in frames, that needs to pass after shooting before the player can shoot again
+    int _timeBetweenShoots;
 
     /// Position of the mouse on the window
     sf::Vector2f _mousePosition;
 
     /// Window on which the controls are applied
     sf::RenderWindow const& _window;
+
+    /// Controls configuration
+    Config _config;
 };
 
 } // namespace HideAndSeekAndShoot

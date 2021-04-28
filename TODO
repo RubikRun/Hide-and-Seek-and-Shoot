@@ -55,6 +55,10 @@
     Gun class and Person class do a lot of same things,
     maybe move those things to another interface class, or sth
 
-- IDEA:
+- IDEA0:
     It will be good if configs for each type are loaded only once (in Game or World class)
     and are being passed around, instead of each instance loading them for themselves.
+
+- IDEA1:
+    Make configs and configurable variables static.
+    Think about moving congis to game class, and making entity classes have only a pointer to their configs

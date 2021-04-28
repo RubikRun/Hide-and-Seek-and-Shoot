@@ -6,10 +6,12 @@
 
 #include "../utils/geometryUtils.hpp"
 
+#include <iostream>
+
 namespace
 {
 
-float const SPEED_DEFAULT = 5.f;
+float const SPEED_REL_DEFAULT = 0.007f;
 
 } // namespace
 
@@ -25,6 +27,7 @@ Bullet::Bullet(
     _config(config)
 {
     SetTexture(tex);
+    ConfigSpeed();
     InitVelocity(targetDir);
 
     sf::Transformable::setPosition(gun->getPosition());
@@ -88,8 +91,23 @@ void Bullet::SetTexture(sf::Texture const* tex)
 
 void Bullet::InitVelocity(sf::Vector2f targetDir)
 {
-    // TODO: move speed to config, and make relative
-    _velocity = GeometryUtils::NormaliseVector(targetDir) * SPEED_DEFAULT;
+    _velocity = GeometryUtils::NormaliseVector(targetDir) * _speed;
+}
+
+void Bullet::ConfigSpeed()
+{
+    auto speedConfig = _config->find("speed");
+    float speedRel;
+    if (speedConfig != _config->end())
+    {
+        speedRel = std::stof(speedConfig->second);
+    }
+    else
+    {
+        speedRel = SPEED_REL_DEFAULT;
+    }
+    _speed = speedRel * _gun->GetPerson()->GetWorld()->GetSize().x;
+    std::cout << _speed << std::endl;
 }
 
 } // namespace HideAndSeekAndShoot

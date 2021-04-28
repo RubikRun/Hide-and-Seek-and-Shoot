@@ -67,6 +67,9 @@ class Bullet : public sf::Transformable, public sf::Drawable
      */
     void InitVelocity(sf::Vector2f targetDir);
 
+    /// Configures a bullet's speed, as specified in the config
+    void ConfigSpeed();
+
   private: /* variables */
 
     /// The gun from which the bullet has been shot
@@ -77,6 +80,9 @@ class Bullet : public sf::Transformable, public sf::Drawable
 
     /// Vector's velocity
     sf::Vector2f _velocity;
+
+    /// Speed of the bullet
+    float _speed;
 
     /// Pointer to a bullet's config
     Config const* _config;
